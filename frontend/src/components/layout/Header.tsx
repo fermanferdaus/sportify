@@ -94,8 +94,8 @@ const Header = () => {
               to="/favorites"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center gap-1.5 text-rose-500 transition-colors"
-                  : "flex items-center gap-1.5 text-slate-400 hover:text-rose-400 transition-colors"
+                  ? "text-blue-500 transition-colors"
+                  : "flex items-center gap-1.5 text-slate-400 hover:text-blue-500 transition-colors"
               }
             >
               Favorites
@@ -231,7 +231,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 p-5 rounded-3xl border transition-all ${
                       isActive
-                        ? "bg-rose-600/10 border-rose-500/30 text-rose-500 shadow-[inset_0_0_20px_rgba(244,63,94,0.1)]"
+                        ? "bg-blue-600/10 border-blue-500/30 text-blue-500 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]"
                         : "bg-slate-950 border-slate-800 text-slate-400"
                     }`
                   }
@@ -279,7 +279,7 @@ const Header = () => {
                     className="flex items-center justify-center gap-3 w-full p-5 rounded-3xl bg-red-950/20 border border-red-900/40 text-red-500 shadow-xl"
                   >
                     <LogOut size={20} />
-                    <span className="font-bold text-lg">Terminate Session</span>
+                    <span className="font-bold text-lg">SignOut</span>
                   </button>
                 </div>
               </>
@@ -298,7 +298,7 @@ const Header = () => {
             {/* Branding Footer inside Menu */}
             <div className="pt-20 text-center opacity-20">
               <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">
-                Sportify v2.4
+                Sportify V1.0
               </span>
             </div>
           </nav>

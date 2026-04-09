@@ -7,8 +7,8 @@ interface ProfileInfoViewProps {
 
 const ProfileInfoView: React.FC<ProfileInfoViewProps> = ({ user }) => {
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-8 shadow-2xl backdrop-blur-sm animate-in fade-in duration-500">
-      <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <h3 className="text-xl font-bold text-white flex items-center gap-2">
         <div className="h-6 w-1 bg-blue-600 rounded-full" />
         Basic Information
       </h3>

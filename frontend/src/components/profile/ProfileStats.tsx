@@ -8,8 +8,11 @@ interface ProfileStatsProps {
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({ favoritesCount, favoritesStatus }) => {
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-8 backdrop-blur-sm sticky top-24">
-      <h3 className="text-xl font-bold text-white mb-6">Account Statistics</h3>
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold text-white flex items-center gap-2">
+        <div className="h-6 w-1 bg-blue-600 rounded-full" />
+        Account Statistics
+      </h3>
       
       <div className="space-y-4">
         <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-950/50 border border-slate-800/50">

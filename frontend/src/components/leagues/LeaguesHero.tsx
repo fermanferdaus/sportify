@@ -1,68 +1,74 @@
-import React, { useState } from 'react';
-import { Trophy } from 'lucide-react';
+import React from "react";
+import { Trophy } from "lucide-react";
+import DotGrid from "../ui/DotGrid";
 
 const LeaguesHero: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left - width / 2) / (width / 2);
-    const y = (clientY - top - height / 2) / (height / 2);
-    setMousePos({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePos({ x: 0, y: 0 });
-  };
-
   return (
-    <section
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative pt-12 pb-6 flex flex-col items-center text-center perspective-1000 overflow-visible"
-    >
-      <div
-        className="relative z-10 flex flex-col items-center gap-6 transition-transform duration-300 ease-out will-change-transform"
-        style={{
-          transform: `translate3d(${mousePos.x * 10}px, ${mousePos.y * 10}px, 0) rotateX(${-mousePos.y * 5}deg) rotateY(${mousePos.x * 5}deg)`,
-        }}
-      >
-        <div
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-4 duration-1000 transition-transform duration-500 ease-out"
-          style={{
-            transform: `translate3d(${mousePos.x * 15}px, ${mousePos.y * 15}px, 0)`,
-          }}
-        >
-          <Trophy size={14} className="animate-bounce" />
+    <section className="relative pb-38 min-h-[90vh] flex flex-col items-center justify-center text-center overflow-hidden bg-slate-950">
+      <div className="relative z-20 flex flex-col items-center gap-8 animate-in fade-in zoom-in-95 duration-1000">
+        {/* Antigravity Style Glassmorphism Badge */}
+        <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(59,130,246,0.1)] text-blue-400 text-xs font-bold uppercase tracking-[0.2em]">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+          <Trophy size={14} className="text-blue-400" />
           Leading Sports Destination
         </div>
-        <h1
-          className="text-4xl md:text-7xl font-extrabold tracking-tight sm:text-6xl text-gradient perspective-1000 animate-in fade-in zoom-in-95 duration-1000 delay-100 transition-transform duration-700 ease-out"
-          style={{
-            transform: `translate3d(${mousePos.x * 25}px, ${mousePos.y * 25}px, 0) rotateZ(${mousePos.x * 2}deg)`,
-          }}
-        >
-          Global Sports <br />
-          <span className="text-white">Leagues Worldwide</span>
-        </h1>
-        <p
-          className="max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200 transition-transform duration-1000 ease-out"
-          style={{
-            transform: `translate3d(${mousePos.x * 40}px, ${mousePos.y * 40}px, 0)`,
-          }}
-        >
-          Experience the thrill of global football. Explore detailed team
-          profiles, exclusive statistics, and upcoming clash schedules from
-          the world's most prestigious leagues.
+
+        <div className="space-y-4">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
+            <span className="block text-gradient-electric animate-in slide-in-from-top-8 duration-1000 delay-100 pb-2">
+              Global Sports
+            </span>
+            <span className="block text-white animate-in slide-in-from-top-8 duration-1000 delay-200">
+              Leagues Worldwide
+            </span>
+          </h1>
+        </div>
+
+        <p className="max-w-2xl text-lg md:text-xl text-slate-400 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
+          Explore sports leagues from around the world. Discover teams, legacy
+          registries, league standings, and previous match results.
         </p>
       </div>
 
-      {/* Background glow in hero */}
+      {/* Hero-Restricted Oversized DotGrid Background - Negative inset to hide 'hard' edges */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 blur-[120px] rounded-full -z-10 transition-transform duration-1000 ease-out"
+        className="absolute z-0 pointer-events-none"
         style={{
-          transform: `translate3d(${-mousePos.x * 50}px, ${-mousePos.y * 50}px, 0) scale(${1 + Math.abs(mousePos.x) * 0.1})`,
+          top: "-150px",
+          left: "-150px",
+          right: "-150px",
+          bottom: "-150px",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 100% 100% at 50% 50%, black 10%, transparent 90%)",
+          maskImage:
+            "radial-gradient(ellipse 100% 100% at 50% 50%, black 10%, transparent 90%)",
+        }}
+      >
+        <DotGrid
+          dotSize={4}
+          gap={42}
+          baseColor="#334155"
+          activeColor="#3b82f6"
+          proximity={200}
+          shockStrength={2.5}
+          className="opacity-100"
+        />
+
+        {/* Deep atmospheric blending */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-transparent to-slate-950" />
+      </div>
+
+      {/* Intensified Peripheral Blur Layer - Maximum Atmospheric Haze */}
+      <div
+        className="absolute inset-0 z-10 pointer-events-none backdrop-blur-[64px]"
+        style={{
+          WebkitMaskImage:
+            "radial-gradient(ellipse 100% 100% at 50% 50%, transparent 20%, black 100%)",
+          maskImage:
+            "radial-gradient(ellipse 100% 100% at 50% 50%, transparent 20%, black 100%)",
         }}
       />
     </section>

@@ -65,21 +65,21 @@ const ProfilePage = () => {
       )}
 
       {/* Main Grid Layout */}
-      <div className="grid gap-8 md:grid-cols-3">
+      <div className="grid gap-8 md:grid-cols-3 items-start">
         {/* Left/Main Column: Avatar and Forms */}
-        <div className="md:col-span-2 space-y-8">
-          <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-1 bg-gradient-to-br from-slate-800/20 via-transparent to-blue-500/5">
-            <div className="p-8 rounded-[2.85rem] bg-slate-900/60 backdrop-blur-xl">
-              <ProfileAvatar
-                user={user}
-                isEditing={isEditing}
-                previewImage={previewImage}
-                isLoading={isLoading}
-                onImageClick={() => fileInputRef.current?.click()}
-                fileInputRef={fileInputRef}
-                handleImageChange={handleImageChange}
-              />
-              
+        <div className="md:col-span-2 rounded-3xl border border-slate-800 bg-slate-900/40 p-1 bg-gradient-to-br from-slate-800/20 via-transparent to-blue-500/5">
+          <div className="p-8 pb-12 rounded-[2.85rem] bg-slate-900/60 backdrop-blur-xl space-y-10">
+            <ProfileAvatar
+              user={user}
+              isEditing={isEditing}
+              previewImage={previewImage}
+              isLoading={isLoading}
+              onImageClick={() => fileInputRef.current?.click()}
+              fileInputRef={fileInputRef}
+              handleImageChange={handleImageChange}
+            />
+            
+            <div className="pt-2">
               {isEditing ? (
                 <ProfileEditForm
                   formData={formData}
@@ -96,11 +96,13 @@ const ProfilePage = () => {
         </div>
 
         {/* Right Column: Sidebar Stats */}
-        <div className="md:col-span-1">
-          <ProfileStats
-            favoritesCount={favorites.length}
-            favoritesStatus={favoritesStatus}
-          />
+        <div className="md:col-span-1 md:sticky md:top-24 rounded-3xl border border-slate-800 bg-slate-900/40 p-1 bg-gradient-to-br from-slate-800/20 via-transparent to-blue-500/5">
+          <div className="p-8 rounded-[2.85rem] bg-slate-900/60 backdrop-blur-xl">
+            <ProfileStats
+              favoritesCount={favorites.length}
+              favoritesStatus={favoritesStatus}
+            />
+          </div>
         </div>
       </div>
     </div>

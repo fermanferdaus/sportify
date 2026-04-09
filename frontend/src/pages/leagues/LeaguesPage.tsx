@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useLeagues } from "../../hooks/useLeagues";
 import PageLoader from "../../components/ui/PageLoader";
 import LeaguesHero from "../../components/leagues/LeaguesHero";
@@ -18,6 +19,16 @@ const LeaguesPage = () => {
     handleRetry,
   } = useLeagues();
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   if (status === "loading" && leagues.length === 0) {
     return <PageLoader message="Loading data..." />;
   }
@@ -31,8 +42,16 @@ const LeaguesPage = () => {
       {/* Interactive Hero Section */}
       <LeaguesHero />
 
-      {/* Global Filter Bar */}
-      <LeaguesSearch value={searchQuery} onChange={setSearchQuery} />
+      {/* Global Filter Bar - Animated Appearance on Scroll */}
+      <div
+        className={`transition-all duration-700 ease-in-out transform ${
+          isScrolled
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 -translate-y-10 scale-95 pointer-events-none"
+        }`}
+      >
+        <LeaguesSearch value={searchQuery} onChange={setSearchQuery} />
+      </div>
 
       {/* Content Sections */}
       <div className="space-y-20 px-4">

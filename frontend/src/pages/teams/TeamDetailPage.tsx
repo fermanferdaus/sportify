@@ -47,23 +47,18 @@ const TeamDetailPage = () => {
       {/* 2. Premium Branding Banner */}
       <TeamDetailBanner team={team} />
 
-      {/* 3. Integrated Information Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 pt-4 relative z-10">
-        {/* Main Content Area (8 Columns) */}
-        <div className="lg:col-span-8 space-y-12">
+      {/* 3. Integrated Information Grid - Responsive Ordering */}
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 px-4 pt-4 relative z-10">
+        
+        {/* Top/Main Content (Order 1 on Mobile, Left Column on Desktop) */}
+        <div className="order-1 lg:col-span-8 space-y-12">
           {/* Historical Context & Legacy */}
           <TeamLegacyCard team={team} />
-
-          {/* League Grid / Standings Performance */}
-          <StandingsTable
-            standings={standings}
-            status={standingsStatus}
-            targetTeamId={team.idTeam}
-          />
         </div>
 
-        {/* Sidebar Utilities (4 Columns) */}
-        <div className="lg:col-span-4 space-y-12">
+        {/* Sidebar Utilities (Order 2 on Mobile, Right Column on Desktop) */}
+        {/* Use lg:row-start-1 lg:col-start-9 to place it in the right column on desktop regardless of order-2 */}
+        <div className="order-2 lg:col-span-4 lg:col-start-9 lg:row-span-2 space-y-12">
           {/* Quick Metrics & Links */}
           <TeamStatsSidebar team={team} />
 
@@ -72,6 +67,16 @@ const TeamDetailPage = () => {
             matches={matches}
             status={matchesStatus}
             formatToWIB={formatToWIB}
+          />
+        </div>
+
+        {/* Bottom Content (Order 3 on Mobile, Below Legacy on Desktop) */}
+        <div className="order-3 lg:col-span-8 space-y-12">
+          {/* League Grid / Standings Performance */}
+          <StandingsTable
+            standings={standings}
+            status={standingsStatus}
+            targetTeamId={team.idTeam}
           />
         </div>
       </div>

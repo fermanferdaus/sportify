@@ -1,5 +1,5 @@
 import { Activity } from "lucide-react";
-import { Instagram, Twitter, Github } from "../ui/BrandIcons";
+import { Instagram, Linkedin, Github } from "../ui/BrandIcons";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { Link } from "react-router-dom";
@@ -25,25 +25,31 @@ const Footer = () => {
               </span>
             </div>
             <p className="max-w-xs text-slate-400 leading-relaxed">
-              The ultimate destination for global soccer enthusiasts. Track
+              The ultimate destination for global sports enthusiasts. Track
               leagues, discover teams, and stay updated with premium sports
               data.
             </p>
             <div className="flex items-center gap-4">
               <a
-                href="#"
+                href="https://www.linkedin.com/in/ferman-ferdaus"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all"
               >
-                <Twitter size={18} />
+                <Linkedin size={18} />
               </a>
               <a
                 href="https://www.instagram.com/fermanferdaus_"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all"
               >
                 <Instagram size={18} />
               </a>
               <a
                 href="https://github.com/fermanferdaus"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="h-10 w-10 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-600 transition-all"
               >
                 <Github size={18} />
@@ -88,10 +94,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Discover Sections (Replaces Platform) */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              Platform
+              Discover
             </h4>
             <ul className="space-y-4">
               <li>
@@ -99,7 +105,7 @@ const Footer = () => {
                   href="#"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  Privacy Policy
+                  Soccer
                 </a>
               </li>
               <li>
@@ -107,7 +113,7 @@ const Footer = () => {
                   href="#"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  Terms of Service
+                  Basketball
                 </a>
               </li>
               <li>
@@ -115,7 +121,15 @@ const Footer = () => {
                   href="#"
                   className="text-slate-400 hover:text-white transition-colors"
                 >
-                  API Status
+                  Motorsport
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Formula 1
                 </a>
               </li>
             </ul>
@@ -124,12 +138,14 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500 font-medium">
-            &copy; 2026 Sportify by Ferman Ferdaus. Built for elite fans.
+            &copy; {new Date().getFullYear()} Sportify by Ferman Ferdaus. Built for elite fans.
           </p>
           <div className="text-xs text-slate-600 flex items-center gap-2">
             Data provided by{" "}
             <a
               href="https://www.thesportsdb.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-blue-500/50 hover:text-blue-500 transition-colors"
             >
               TheSportsDB API
