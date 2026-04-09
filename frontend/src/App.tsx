@@ -9,10 +9,12 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import FavoritesPage from "./pages/favorite/FavoritesPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ScrollToTop from "./components/utils/ScrollToTop";
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Toaster
         position="top-right"
         reverseOrder={false}

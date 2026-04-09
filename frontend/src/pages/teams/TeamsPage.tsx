@@ -12,6 +12,14 @@ import {
 import type { AppDispatch, RootState } from "../../store";
 import { fetchTeams } from "../../features/sportsSlice";
 import PageLoader from "../../components/ui/PageLoader";
+import { useInView } from "react-intersection-observer";
+
+// Skeleton component for lazy loading images
+const ImageSkeleton = () => (
+  <div className="absolute inset-0 bg-slate-800 animate-pulse rounded-2xl flex items-center justify-center">
+    <Trophy size={24} className="text-slate-700 opacity-20" />
+  </div>
+);
 
 const TeamsPage = () => {
   const { leagueName } = useParams<{ leagueName: string }>();
@@ -19,7 +27,7 @@ const TeamsPage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { teams, status, error } = useSelector(
+  const { teams, teamsStatus: status, error } = useSelector(
     (state: RootState) => state.sports,
   );
 
@@ -119,44 +127,13 @@ const TeamsPage = () => {
       {/* Teams Grid */}
       <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 px-4">
         {filteredTeams.map((team, index) => (
-          <div
-            key={team.idTeam}
-            onClick={() =>
-              navigate(
-                `/teams/${team.idTeam}/${encodeURIComponent(leagueName || "")}`,
-              )
-            }
-            style={{ animationDelay: `${index * 30}ms` }}
-            className="glass-card group p-4 sm:p-8 cursor-pointer rounded-3xl text-center relative overflow-hidden active:scale-95 animate-in fade-in slide-in-from-bottom-6 duration-700"
-          >
-            <div className="relative z-10 space-y-6">
-              <div className="relative mx-auto">
-                <div className="h-28 w-28 mx-auto flex items-center justify-center rounded-2xl bg-slate-800 transition-all group-hover:scale-110 group-hover:rotate-3">
-                  <img
-                    src={team.strBadge}
-                    alt={team.strTeam}
-                    className="h-20 w-20 object-contain"
-                  />
-                </div>
-                <div className="absolute -bottom-2 -right-2 h-8 w-8 rounded-lg bg-blue-600 border-2 border-slate-950 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0 translate-x-3">
-                  <LayoutGrid size={14} />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-                  {team.strTeam}
-                </h3>
-                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
-                  {team.strStadium || "Elite Stadium"}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                Since {team.intFormedYear || "Unknown"}
-              </div>
-            </div>
-          </div>
+          <TeamCard 
+            key={team.idTeam} 
+            team={team} 
+            index={index} 
+            leagueName={leagueName || ""}
+            navigate={navigate} 
+          />
         ))}
 
         {filteredTeams.length === 0 && teams.length > 0 && (
@@ -188,6 +165,81 @@ const TeamsPage = () => {
             </p>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const TeamCard = ({ 
+  team, 
+  index, 
+  leagueName, 
+  navigate 
+}: { 
+  team: any, 
+  index: number, 
+  leagueName: string, 
+  navigate: any 
+}) => {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      onClick={() => navigate(`/teams/${team.idTeam}/${encodeURIComponent(leagueName)}`)}
+      style={{ 
+        animationDelay: `${(index % 8) * 80}ms`,
+        opacity: inView ? 1 : 0,
+        transform: inView 
+          ? 'perspective(1000px) rotateX(0) scale(1) translateY(0)' 
+          : 'perspective(1000px) rotateX(15deg) scale(0.9) translateY(40px)',
+        filter: inView ? 'blur(0)' : 'blur(8px)',
+        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
+      }}
+      className={`glass-card group p-4 sm:p-8 cursor-pointer rounded-3xl text-center relative overflow-hidden active:scale-95 transition-all duration-500 ${
+        inView ? 'animate-in fade-in' : ''
+      }`}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+      
+      {/* Background glow shadow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+
+      <div className="relative z-10 space-y-6">
+        <div className="relative mx-auto">
+          <div className="relative h-28 w-28 mx-auto flex items-center justify-center rounded-2xl bg-slate-800 border border-slate-700/50 group-hover:border-blue-500/50 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-xl">
+            {!imgLoaded && <ImageSkeleton />}
+            <img
+              src={team.strBadge}
+              alt={team.strTeam}
+              loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              className={`h-20 w-20 object-contain transition-all duration-500 ${
+                imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}
+          />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+            {team.strTeam}
+          </h3>
+          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">
+            {team.strStadium || "Elite Stadium"}
+          </p>
+        </div>
+
+        <div className="pt-4 border-t border-slate-800 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+          Since {team.intFormedYear || "Unknown"}
+        </div>
       </div>
     </div>
   );

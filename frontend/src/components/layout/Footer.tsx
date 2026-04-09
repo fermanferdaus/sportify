@@ -1,7 +1,11 @@
 import { Activity } from "lucide-react";
 import { Instagram, Twitter, Github } from "../ui/BrandIcons";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   return (
     <footer className="relative border-t border-slate-800/50 bg-[#020617] pt-16 pb-8 mt-20 overflow-hidden">
       {/* Background glow in footer */}
@@ -54,29 +58,33 @@ const Footer = () => {
             </h4>
             <ul className="space-y-4">
               <li>
-                <a
-                  href="/"
+                <Link
+                  to="/"
                   className="text-slate-400 hover:text-blue-400 transition-colors"
                 >
                   Leagues
-                </a>
+                </Link>
               </li>
-              <li>
-                <a
-                  href="/favorites"
-                  className="text-slate-400 hover:text-rose-400 transition-colors"
-                >
-                  Favorites
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/profile"
-                  className="text-slate-400 hover:text-blue-400 transition-colors"
-                >
-                  My Profile
-                </a>
-              </li>
+              {isAuthenticated && (
+                <>
+                  <li>
+                    <Link
+                      to="/favorites"
+                      className="text-slate-400 hover:text-rose-400 transition-colors"
+                    >
+                      Favorites
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/profile"
+                      className="text-slate-400 hover:text-blue-400 transition-colors"
+                    >
+                      My Profile
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 

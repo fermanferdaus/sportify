@@ -59,7 +59,8 @@ interface SportsState {
   selectedTeamDetail: Team | null;
   standings: Standing[];
   matches: Match[];
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  leaguesStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
+  teamsStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   detailStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   matchesStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   standingsStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -73,7 +74,8 @@ const initialState: SportsState = {
   selectedTeamDetail: null,
   standings: [],
   matches: [],
-  status: 'idle',
+  leaguesStatus: 'idle',
+  teamsStatus: 'idle',
   detailStatus: 'idle',
   matchesStatus: 'idle',
   standingsStatus: 'idle',
@@ -123,26 +125,26 @@ const sportsSlice = createSlice({
     builder
       // Fetch Leagues
       .addCase(fetchLeagues.pending, (state) => {
-        state.status = 'loading';
+        state.leaguesStatus = 'loading';
       })
       .addCase(fetchLeagues.fulfilled, (state, action: PayloadAction<League[]>) => {
-        state.status = 'succeeded';
+        state.leaguesStatus = 'succeeded';
         state.leagues = action.payload;
       })
       .addCase(fetchLeagues.rejected, (state, action) => {
-        state.status = 'failed';
+        state.leaguesStatus = 'failed';
         state.error = action.error.message || 'Failed to fetch leagues';
       })
       // Fetch Teams
       .addCase(fetchTeams.pending, (state) => {
-        state.status = 'loading';
+        state.teamsStatus = 'loading';
       })
       .addCase(fetchTeams.fulfilled, (state, action: PayloadAction<Team[]>) => {
-        state.status = 'succeeded';
+        state.teamsStatus = 'succeeded';
         state.teams = action.payload;
       })
       .addCase(fetchTeams.rejected, (state, action) => {
-        state.status = 'failed';
+        state.teamsStatus = 'failed';
         state.error = action.error.message || 'Failed to fetch teams';
       })
       // Fetch Matches

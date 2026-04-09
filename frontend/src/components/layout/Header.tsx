@@ -59,11 +59,11 @@ const Header = () => {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-500 border-b ${
         scrolled
-          ? "border-blue-900/30 bg-slate-950/85 backdrop-blur-xl py-2"
-          : "border-transparent bg-transparent py-4 hover:bg-slate-950/20"
+          ? "border-blue-900/30 bg-slate-950/85 h-20 backdrop-blur-xl"
+          : "border-transparent bg-transparent h-28 hover:bg-slate-950/10"
       }`}
     >
-      <div className="container mx-auto flex items-center justify-between px-4 sm:px-6">
+      <div className="container mx-auto h-20 flex items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 transition-all group-hover:scale-110 group-hover:rotate-3 relative overflow-hidden">
             <Activity
@@ -183,7 +183,11 @@ const Header = () => {
         <div className="md:hidden fixed inset-0 z-[100] bg-[#020617] h-screen w-screen animate-in fade-in slide-in-from-right-4 duration-300 overflow-y-auto">
           {/* Internal Header for the Drawer */}
           <div className="flex items-center justify-between px-6 py-6 border-b border-slate-800/50">
-            <Link to="/" className="flex items-center gap-2.5" onClick={() => setIsMenuOpen(false)}>
+            <Link
+              to="/"
+              className="flex items-center gap-2.5"
+              onClick={() => setIsMenuOpen(false)}
+            >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg relative overflow-hidden">
                 <Activity size={22} className="stroke-[2.5]" />
               </div>
@@ -201,9 +205,11 @@ const Header = () => {
 
           <nav className="flex flex-col p-6 space-y-4">
             <div className="mb-2">
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] px-2">Navigation Node</span>
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] px-2">
+                Navigation Node
+              </span>
             </div>
-            
+
             <NavLink
               to="/"
               className={({ isActive }) =>
@@ -258,8 +264,12 @@ const Header = () => {
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-bold text-lg leading-tight">Identity Profile</span>
-                    <span className="text-[10px] font-medium opacity-40 uppercase tracking-widest">{user?.email}</span>
+                    <span className="font-bold text-lg leading-tight">
+                      Identity Profile
+                    </span>
+                    <span className="text-[10px] font-medium opacity-40 uppercase tracking-widest">
+                      {user?.email}
+                    </span>
                   </div>
                 </NavLink>
 
@@ -279,13 +289,17 @@ const Header = () => {
                 className="flex items-center justify-center gap-3 p-6 rounded-3xl bg-blue-600 text-white mt-8 shadow-[0_15px_30px_rgba(59,130,246,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <User size={20} />
-                <span className="font-black text-lg uppercase tracking-wider">Join The Grid</span>
+                <span className="font-black text-lg uppercase tracking-wider">
+                  Join The Grid
+                </span>
               </Link>
             )}
-            
+
             {/* Branding Footer inside Menu */}
             <div className="pt-20 text-center opacity-20">
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">Sportify v2.4</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">
+                Sportify v2.4
+              </span>
             </div>
           </nav>
         </div>
