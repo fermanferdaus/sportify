@@ -1,326 +1,57 @@
-import { useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import type { AppDispatch, RootState } from "../../store";
-import { fetchLeagues } from "../../features/sportsSlice";
-import {
-  Trophy,
-  ArrowRight,
-  Search as SearchIcon,
-  Globe,
-  Info,
-} from "lucide-react";
+import { useLeagues } from "../../hooks/useLeagues";
 import PageLoader from "../../components/ui/PageLoader";
-import { useInView } from "react-intersection-observer";
-
-// Skeleton component for lazy loading images
-const ImageSkeleton = () => (
-  <div className="absolute inset-0 bg-slate-800 animate-pulse rounded-2xl sm:rounded-3xl flex items-center justify-center">
-    <Trophy size={20} className="text-slate-700 opacity-20" />
-  </div>
-);
+import LeaguesHero from "../../components/leagues/LeaguesHero";
+import LeaguesSearch from "../../components/leagues/LeaguesSearch";
+import LeagueCard from "../../components/leagues/LeagueCard";
+import LeagueCategory from "../../components/leagues/LeagueCategory";
+import LeaguesError from "../../components/leagues/LeaguesError";
+import LeaguesEmpty from "../../components/leagues/LeaguesEmpty";
 
 const LeaguesPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  const { leagues, leaguesStatus: status } = useSelector((state: RootState) => state.sports);
-
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchLeagues());
-    }
-  }, [status, dispatch]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY, currentTarget } = e;
-    const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    const x = (clientX - left - width / 2) / (width / 2);
-    const y = (clientY - top - height / 2) / (height / 2);
-    setMousePos({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePos({ x: 0, y: 0 });
-  };
-
-  const filteredLeagues = useMemo(() => {
-    return leagues.filter(
-      (league) =>
-        league.strLeague.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        league.strSport.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        league.strLeagueAlternate
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase()),
-    );
-  }, [leagues, searchQuery]);
-
-  // Group leagues by Sport Category
-  const groupedLeagues = useMemo(() => {
-    const groups: Record<string, typeof filteredLeagues> = {};
-    filteredLeagues.forEach((league) => {
-      if (!groups[league.strSport]) {
-        groups[league.strSport] = [];
-      }
-      groups[league.strSport].push(league);
-    });
-
-    // Sort categories: Soccer first, then alphabetical
-    return Object.keys(groups)
-      .sort((a, b) => {
-        if (a === "Soccer") return -1;
-        if (b === "Soccer") return 1;
-        return a.localeCompare(b);
-      })
-      .reduce(
-        (acc, key) => {
-          acc[key] = groups[key];
-          return acc;
-        },
-        {} as Record<string, typeof filteredLeagues>,
-      );
-  }, [filteredLeagues]);
+  const {
+    leagues,
+    filteredLeagues,
+    groupedLeagues,
+    status,
+    searchQuery,
+    setSearchQuery,
+    handleRetry,
+  } = useLeagues();
 
   if (status === "loading" && leagues.length === 0) {
-    return <PageLoader message={`Loading data...`} />;
+    return <PageLoader message="Loading data..." />;
   }
 
   if (status === "failed") {
-    return (
-      <div className="rounded-3xl border border-red-900/40 bg-red-950/20 p-12 text-center backdrop-blur-sm max-w-2xl mx-auto my-12 animate-in fade-in zoom-in duration-500">
-        <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-red-500/10 text-red-500 border border-red-500/20">
-          <Globe size={40} className="animate-pulse" />
-        </div>
-        <h3 className="text-2xl font-bold text-white mb-3">Connection Issue</h3>
-        <p className="text-slate-400 mb-8 leading-relaxed">
-          We're having trouble connecting to the sports database. This might be
-          a temporary network issue or API limit.
-        </p>
-        <button
-          onClick={() => dispatch(fetchLeagues())}
-          className="rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-8 py-3.5 text-sm font-bold text-white hover:scale-105 transition-all shadow-lg shadow-red-600/20 active:scale-95"
-        >
-          Try Again
-        </button>
-      </div>
-    );
+    return <LeaguesError onRetry={handleRetry} />;
   }
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-16 pb-20">
-      {/* Hero Section */}
-      <section
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className="relative pt-12 pb-6 flex flex-col items-center text-center perspective-1000 overflow-visible"
-      >
-        <div
-          className="relative z-10 flex flex-col items-center gap-6 transition-transform duration-300 ease-out will-change-transform"
-          style={{
-            transform: `translate3d(${mousePos.x * 10}px, ${mousePos.y * 10}px, 0) rotateX(${-mousePos.y * 5}deg) rotateY(${mousePos.x * 5}deg)`,
-          }}
-        >
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest animate-in fade-in slide-in-from-top-4 duration-1000 transition-transform duration-500 ease-out"
-            style={{
-              transform: `translate3d(${mousePos.x * 15}px, ${mousePos.y * 15}px, 0)`,
-            }}
-          >
-            <Trophy size={14} className="animate-bounce" />
-            Leading Sports Destination
-          </div>
-          <h1
-            className="text-4xl md:text-7xl font-extrabold tracking-tight sm:text-6xl text-gradient perspective-1000 animate-in fade-in zoom-in-95 duration-1000 delay-100 transition-transform duration-700 ease-out"
-            style={{
-              transform: `translate3d(${mousePos.x * 25}px, ${mousePos.y * 25}px, 0) rotateZ(${mousePos.x * 2}deg)`,
-            }}
-          >
-            Global Sports <br />
-            <span className="text-white">Leagues Worldwide</span>
-          </h1>
-          <p
-            className="max-w-2xl text-lg md:text-xl text-slate-400 leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200 transition-transform duration-1000 ease-out"
-            style={{
-              transform: `translate3d(${mousePos.x * 40}px, ${mousePos.y * 40}px, 0)`,
-            }}
-          >
-            Experience the thrill of global football. Explore detailed team
-            profiles, exclusive statistics, and upcoming clash schedules from
-            the world's most prestigious leagues.
-          </p>
-        </div>
+      {/* Interactive Hero Section */}
+      <LeaguesHero />
 
-        {/* Background glow in hero */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/20 blur-[120px] rounded-full -z-10 transition-transform duration-1000 ease-out"
-          style={{
-            transform: `translate3d(${-mousePos.x * 50}px, ${-mousePos.y * 50}px, 0) scale(${1 + Math.abs(mousePos.x) * 0.1})`,
-          }}
-        />
-      </section>
+      {/* Global Filter Bar */}
+      <LeaguesSearch value={searchQuery} onChange={setSearchQuery} />
 
-      {/* Search/Filter Bar */}
-      <div className="relative max-w-2xl mx-auto px-4 z-30 group">
-        <span className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors pointer-events-none z-10 flex items-center justify-center">
-          <SearchIcon size={22} strokeWidth={2.5} />
-        </span>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search for your favorite league..."
-          className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-2xl py-5 pl-14 pr-14 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-2xl"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* Grouped Grid Sections */}
+      {/* Content Sections */}
       <div className="space-y-20 px-4">
         {Object.entries(groupedLeagues).map(([sport, sportLeagues]) => (
-          <div key={sport} className="space-y-8">
-            {/* Category Header */}
-            <div className="flex items-center gap-4">
-              <div className="h-8 w-1.5 bg-blue-600 rounded-full" />
-              <h2 className="text-2xl font-black text-white tracking-widest uppercase text-sm flex items-center gap-3">
-                {sport} <span className="text-slate-700">/ Registry</span>
-              </h2>
-              <div className="flex-1 h-px bg-slate-800/50" />
-            </div>
-
-            {/* Grid for this category */}
-            <div className="grid grid-cols-2 gap-4 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {sportLeagues.map((league, index) => (
-                  <LeagueCard 
-                    key={league.idLeague} 
-                    league={league} 
-                    index={index}
-                    navigate={navigate}
-                  />
-              ))}
-            </div>
-          </div>
+          <LeagueCategory key={sport} sport={sport}>
+            {sportLeagues.map((league, index) => (
+              <LeagueCard key={league.idLeague} league={league} index={index} />
+            ))}
+          </LeagueCategory>
         ))}
 
+        {/* Empty States */}
         {filteredLeagues.length === 0 && leagues.length > 0 && (
-          <div className="col-span-full py-20 text-center glass-card rounded-[2.5rem] border-dashed border-slate-800 px-4">
-            <Info
-              size={48}
-              className="mx-auto text-slate-700 mb-4 animate-pulse"
-            />
-            <p className="text-xl text-slate-300 font-bold uppercase tracking-widest">
-              No leagues matches your search
-            </p>
-            <p className="text-slate-500 mt-2">
-              Try searching for a different league or dynamic sport.
-            </p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="mt-6 text-blue-500 font-bold hover:underline"
-            >
-              Clear Search
-            </button>
-          </div>
+          <LeaguesEmpty type="search" onClear={() => setSearchQuery("")} />
         )}
 
         {leagues.length === 0 && status === "succeeded" && (
-          <div className="col-span-full py-20 text-center">
-            <Globe size={48} className="mx-auto text-slate-700 mb-4" />
-            <p className="text-xl text-slate-500 font-medium font-bold uppercase tracking-widest">
-              No leagues available in database.
-            </p>
-          </div>
+          <LeaguesEmpty type="database" />
         )}
-      </div>
-    </div>
-  );
-};
-
-const LeagueCard = ({
-  league,
-  index,
-  navigate,
-}: {
-  league: any;
-  index: number;
-  navigate: any;
-}) => {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-  const [imgLoaded, setImgLoaded] = useState(false);
-
-  return (
-    <div
-      ref={ref}
-      onClick={() =>
-        navigate(`/leagues/${encodeURIComponent(league.strLeague)}/teams`)
-      }
-      style={{ 
-        animationDelay: `${(index % 6) * 120}ms`,
-        opacity: inView ? 1 : 0,
-        transform: inView 
-          ? 'perspective(1000px) rotateX(0) scale(1) translateY(0)' 
-          : 'perspective(1000px) rotateX(15deg) scale(0.9) translateY(40px)',
-        filter: inView ? 'blur(0)' : 'blur(8px)',
-        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
-      }}
-      className={`glass-card group relative p-5 sm:p-8 cursor-pointer rounded-[2rem] overflow-hidden hover:scale-[1.05] active:scale-[0.98] transition-all duration-500 ${
-        inView ? 'animate-in fade-in' : ''
-      }`}
-    >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-      {/* Shine effect on hover */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
-      
-      {/* Background glow shadow */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-
-      <div className="relative z-10 flex flex-col items-center text-center gap-4 sm:gap-6">
-        <div className="relative h-16 w-16 sm:h-24 sm:w-24 flex items-center justify-center rounded-2xl sm:rounded-3xl bg-slate-800 border-2 border-slate-700/50 group-hover:border-blue-500/50 transition-all group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-          {league.strBadge ? (
-            <>
-              {!imgLoaded && <ImageSkeleton />}
-              <img
-                src={league.strBadge}
-                alt={league.strLeague}
-                loading="lazy"
-                onLoad={() => setImgLoaded(true)}
-                className={`h-10 w-10 sm:h-16 sm:w-16 object-contain group-hover:scale-110 transition-all duration-500 ${
-                  imgLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                }`}
-              />
-            </>
-          ) : (
-            <Trophy
-              size={24}
-              className="sm:size-[32px] text-slate-600 group-hover:text-blue-400 transition-colors"
-            />
-          )}
-        </div>
-
-        <div className="space-y-1 sm:space-y-2">
-          <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-            {league.strLeague}
-          </h3>
-          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-800/50 text-slate-400 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider group-hover:bg-blue-500/20 group-hover:text-blue-300 transition-all">
-            {league.strSport}
-          </div>
-        </div>
-
-        <div className="hidden sm:flex items-center justify-center gap-2 text-sm font-bold text-blue-500 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 mt-2">
-          Explore Teams <ArrowRight size={16} strokeWidth={3} />
-        </div>
       </div>
     </div>
   );

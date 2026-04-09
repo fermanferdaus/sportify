@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../../store";
-import { updateProfile } from "../../authSlice";
+import type { AppDispatch, RootState } from "../store";
+import { updateProfile } from "../features/authSlice";
 import heic2any from "heic2any";
 
-export const useProfileUpdate = () => {
+export const useProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -83,8 +83,8 @@ export const useProfileUpdate = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setIsLoading(true);
     setError(null);
     setSuccess(null);

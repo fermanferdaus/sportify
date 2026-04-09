@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules\Password;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 
 class ProfileController extends BaseController
 {
@@ -24,13 +19,6 @@ class ProfileController extends BaseController
     public function update(Request $request)
     {
         $user = $request->user();
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'current_password' => 'nullable|required_with:new_password',
-            'new_password' => ['nullable', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,webp,heic|max:5120',
-        ]);
 
         try {
             $user = $this->profileService->updateProfile($user, $request->all());

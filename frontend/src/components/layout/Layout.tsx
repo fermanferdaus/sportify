@@ -8,7 +8,7 @@ const Layout = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 sm:px-6">
+      <main className="container mx-auto px-4 sm:px-6">
         <Outlet />
       </main>
 
