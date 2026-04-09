@@ -94,7 +94,7 @@ export const useTeamDetail = () => {
             team_id: team.idTeam,
             team_name: team.strTeam,
             team_badge: team.strBadge,
-            league_name: team.strLeague,
+            league_name: team.strLeague || "",
           }),
         ).unwrap();
         toast.success(`${team.strTeam} added to favorites!`, {

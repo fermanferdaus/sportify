@@ -7,7 +7,7 @@ interface ProfileAvatarProps {
   previewImage: string | null;
   isLoading: boolean;
   onImageClick: () => void;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   handleImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
