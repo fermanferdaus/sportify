@@ -62,6 +62,7 @@ interface SportsState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   detailStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   matchesStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
+  standingsStatus: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
 }
 
@@ -75,6 +76,7 @@ const initialState: SportsState = {
   status: 'idle',
   detailStatus: 'idle',
   matchesStatus: 'idle',
+  standingsStatus: 'idle',
   error: null,
 };
 
@@ -114,6 +116,7 @@ const sportsSlice = createSlice({
       state.matches = [];
       state.detailStatus = 'idle';
       state.matchesStatus = 'idle';
+      state.standingsStatus = 'idle';
     }
   },
   extraReducers: (builder) => {
@@ -175,14 +178,15 @@ const sportsSlice = createSlice({
       })
       // Fetch Standings
       .addCase(fetchStandings.pending, (state) => {
-        state.status = 'loading';
+        state.standingsStatus = 'loading';
+        state.standings = []; // Clear old standings
       })
       .addCase(fetchStandings.fulfilled, (state, action: PayloadAction<Standing[]>) => {
-        state.status = 'succeeded';
+        state.standingsStatus = 'succeeded';
         state.standings = action.payload || [];
       })
       .addCase(fetchStandings.rejected, (state, action) => {
-        state.status = 'failed';
+        state.standingsStatus = 'failed';
         state.error = action.error.message || 'Failed to fetch standings';
       });
   },

@@ -11,7 +11,7 @@ class SportsService
 {
     protected string $baseUrl;
     protected string $apiKey;
-    protected int $cacheDuration = 3600; // 1 Jam
+    protected int $cacheDuration = 86400; // 24 Jam
 
     public function __construct()
     {
@@ -20,12 +20,51 @@ class SportsService
     }
 
     /**
-     * Get all leagues.
+     * Get all leagues with enriched data (logos) where possible.
      */
     public function getLeagues(): array
     {
-        return $this->fetchCached('sports_leagues', 'all_leagues.php');
+        return Cache::remember('sports_leagues_enriched_v1', $this->cacheDuration, function () {
+            // 1. Get the master list of all leagues
+            $allLeagues = $this->fetchCached('raw_raw_all_leagues', 'all_leagues.php');
+            
+            // 2. Get enriched data for popular sports to maximize count without hitting rate limits
+            $sports = [
+                'Soccer', 'Basketball', 'Motorsport', 'American Football', 'Fighting'
+            ];
+            
+            // 3. Create a master collection of leagues index by ID
+            $masterLeagues = [];
+            
+            // Add all leagues from the master list (minimalist/capped at 10)
+            foreach ($allLeagues as $league) {
+                if (isset($league['idLeague'])) {
+                    $masterLeagues[$league['idLeague']] = $league;
+                }
+            }
+            
+            // Function to merge enriched data accurately
+            foreach ($sports as $sport) {
+                $sportLeagues = $this->fetchCached("enriched_{$sport}_leagues", 'search_all_leagues.php', ['s' => $sport]);
+                foreach ($sportLeagues as $league) {
+                    $id = $league['idLeague'] ?? null;
+                    if ($id) {
+                        // We prefer data from the enriched list (logos, descriptions, etc.)
+                        $masterLeagues[$id] = array_merge($masterLeagues[$id] ?? [], $league);
+                    }
+                }
+            }
+
+            // Convert back to sequential array
+            $merged = array_values($masterLeagues);
+
+            $enrichedCount = count(array_filter($merged, fn($l) => !empty($l['strBadge'])));
+            \Log::info("SportsService: Final league count: " . count($merged) . " (Enriched: $enrichedCount)");
+
+            return $merged;
+        });
     }
+
 
     /**
      * Get all teams in a league.
@@ -76,10 +115,16 @@ class SportsService
     public function getStandings(string $leagueId, string $season = '2024-2025'): array
     {
         $cacheKey = "sports_standings_{$leagueId}_" . str_replace('-', '_', $season);
-        return $this->fetchCached($cacheKey, 'lookuptable.php', [
+        $data = $this->fetchCached($cacheKey, 'lookuptable.php', [
             'l' => $leagueId,
             's' => $season
         ]);
+
+        if (empty($data)) {
+            \Log::info("SportsService: No standings data found for league $leagueId in season $season");
+        }
+
+        return $data;
     }
 
     /**
@@ -113,7 +158,14 @@ class SportsService
                 }
 
                 // Ambil key pertama dari json sebagai data (leagues, teams, results, dll)
-                return !empty($data) ? array_values($data)[0] : [];
+                $result = !empty($data) ? array_values($data)[0] : [];
+                
+                // CRITICAL: Do not cache empty results as they might be due to temporary API limits
+                if (empty($result)) {
+                    return [];
+                }
+
+                return $result;
             } catch (\Exception $e) {
                 \Log::error("SportsService Exception: " . $e->getMessage());
                 return [];

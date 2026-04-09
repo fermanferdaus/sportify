@@ -12,6 +12,7 @@ class FavoriteTeam extends Model
         'team_id',
         'team_name',
         'team_badge',
+        'league_name',
     ];
 
     /**

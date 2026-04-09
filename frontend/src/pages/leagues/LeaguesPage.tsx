@@ -51,8 +51,34 @@ const LeaguesPage = () => {
     );
   }, [leagues, searchQuery]);
 
+  // Group leagues by Sport Category
+  const groupedLeagues = useMemo(() => {
+    const groups: Record<string, typeof filteredLeagues> = {};
+    filteredLeagues.forEach((league) => {
+      if (!groups[league.strSport]) {
+        groups[league.strSport] = [];
+      }
+      groups[league.strSport].push(league);
+    });
+
+    // Sort categories: Soccer first, then alphabetical
+    return Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Soccer") return -1;
+        if (b === "Soccer") return 1;
+        return a.localeCompare(b);
+      })
+      .reduce(
+        (acc, key) => {
+          acc[key] = groups[key];
+          return acc;
+        },
+        {} as Record<string, typeof filteredLeagues>,
+      );
+  }, [filteredLeagues]);
+
   if (status === "loading" && leagues.length === 0) {
-    return <PageLoader message="Discovering top soccer leagues..." />;
+    return <PageLoader message={`Loading data...`} />;
   }
 
   if (status === "failed") {
@@ -105,7 +131,7 @@ const LeaguesPage = () => {
               transform: `translate3d(${mousePos.x * 25}px, ${mousePos.y * 25}px, 0) rotateZ(${mousePos.x * 2}deg)`,
             }}
           >
-            Elite Soccer <br />
+            Global Sports <br />
             <span className="text-white">Leagues Worldwide</span>
           </h1>
           <p
@@ -130,16 +156,16 @@ const LeaguesPage = () => {
       </section>
 
       {/* Search/Filter Bar */}
-      <div className="relative max-w-2xl mx-auto px-4 z-20">
-        <div className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500">
-          <SearchIcon size={20} />
-        </div>
+      <div className="relative max-w-2xl mx-auto px-4 z-30 group">
+        <span className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors pointer-events-none z-10 flex items-center justify-center">
+          <SearchIcon size={22} strokeWidth={2.5} />
+        </span>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search for your favorite league..."
-          className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-2xl py-5 pl-14 pr-6 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-2xl"
+          className="w-full bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-2xl py-5 pl-14 pr-14 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all shadow-2xl"
         />
         {searchQuery && (
           <button
@@ -151,54 +177,71 @@ const LeaguesPage = () => {
         )}
       </div>
 
-      {/* Grid Section */}
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4">
-        {filteredLeagues.map((league, index) => (
-          <div
-            key={league.idLeague}
-            onClick={() =>
-              navigate(`/leagues/${encodeURIComponent(league.strLeague)}/teams`)
-            }
-            style={{ animationDelay: `${index * 50}ms` }}
-            className="glass-card group relative p-8 cursor-pointer rounded-3xl overflow-hidden hover:scale-[1.03] active:scale-[0.98] animate-in fade-in slide-in-from-bottom-6 duration-700"
-          >
-            {/* Glossy overlay effect */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* Grouped Grid Sections */}
+      <div className="space-y-20 px-4">
+        {Object.entries(groupedLeagues).map(([sport, sportLeagues]) => (
+          <div key={sport} className="space-y-8">
+            {/* Category Header */}
+            <div className="flex items-center gap-4">
+              <div className="h-8 w-1.5 bg-blue-600 rounded-full" />
+              <h2 className="text-2xl font-black text-white tracking-widest uppercase text-sm flex items-center gap-3">
+                {sport} <span className="text-slate-700">/ Registry</span>
+              </h2>
+              <div className="flex-1 h-px bg-slate-800/50" />
+            </div>
 
-            <div className="relative z-10 flex flex-col items-center text-center gap-6">
-              <div className="h-24 w-24 flex items-center justify-center rounded-3xl bg-slate-800 border-2 border-slate-700/50 group-hover:border-blue-500/50 transition-all group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
-                {league.strBadge ? (
-                  <img
-                    src={league.strBadge}
-                    alt={league.strLeague}
-                    className="h-16 w-16 object-contain group-hover:scale-110 transition-transform duration-500"
-                  />
-                ) : (
-                  <Trophy
-                    size={32}
-                    className="text-slate-600 group-hover:text-blue-400 transition-colors"
-                  />
-                )}
-              </div>
+            {/* Grid for this category */}
+            <div className="grid grid-cols-2 gap-4 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {sportLeagues.map((league, index) => (
+                <div
+                  key={league.idLeague}
+                  onClick={() =>
+                    navigate(
+                      `/leagues/${encodeURIComponent(league.strLeague)}/teams`,
+                    )
+                  }
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="glass-card group relative p-5 sm:p-8 cursor-pointer rounded-[2rem] overflow-hidden hover:scale-[1.03] active:scale-[0.98] animate-in fade-in slide-in-from-bottom-6 duration-700"
+                >
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
-                  {league.strLeague}
-                </h3>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/50 text-slate-400 text-[10px] font-bold uppercase tracking-wider group-hover:bg-blue-500/20 group-hover:text-blue-300 transition-all">
-                  {league.strSport}
+                  <div className="relative z-10 flex flex-col items-center text-center gap-4 sm:gap-6">
+                    <div className="h-16 w-16 sm:h-24 sm:w-24 flex items-center justify-center rounded-2xl sm:rounded-3xl bg-slate-800 border-2 border-slate-700/50 group-hover:border-blue-500/50 transition-all group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                      {league.strBadge ? (
+                        <img
+                          src={league.strBadge}
+                          alt={league.strLeague}
+                          className="h-10 w-10 sm:h-16 sm:w-16 object-contain group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <Trophy
+                          size={24}
+                          className="sm:size-[32px] text-slate-600 group-hover:text-blue-400 transition-colors"
+                        />
+                      )}
+                    </div>
+
+                    <div className="space-y-1 sm:space-y-2">
+                      <h3 className="text-sm sm:text-xl font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+                        {league.strLeague}
+                      </h3>
+                      <div className="inline-flex items-center gap-1.5 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-800/50 text-slate-400 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider group-hover:bg-blue-500/20 group-hover:text-blue-300 transition-all">
+                        {league.strSport}
+                      </div>
+                    </div>
+
+                    <div className="hidden sm:flex items-center justify-center gap-2 text-sm font-bold text-blue-500 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 mt-2">
+                      Explore Teams <ArrowRight size={16} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 text-sm font-bold text-blue-500 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 mt-2">
-                Explore Teams <ArrowRight size={16} />
-              </div>
+              ))}
             </div>
           </div>
         ))}
 
         {filteredLeagues.length === 0 && leagues.length > 0 && (
-          <div className="col-span-full py-20 text-center glass-card rounded-3xl border-dashed border-slate-800">
+          <div className="col-span-full py-20 text-center glass-card rounded-[2.5rem] border-dashed border-slate-800 px-4">
             <Info
               size={48}
               className="mx-auto text-slate-700 mb-4 animate-pulse"
@@ -221,8 +264,8 @@ const LeaguesPage = () => {
         {leagues.length === 0 && status === "succeeded" && (
           <div className="col-span-full py-20 text-center">
             <Globe size={48} className="mx-auto text-slate-700 mb-4" />
-            <p className="text-xl text-slate-500 font-medium">
-              No leagues available at the moment.
+            <p className="text-xl text-slate-500 font-medium font-bold uppercase tracking-widest">
+              No leagues available in database.
             </p>
           </div>
         )}

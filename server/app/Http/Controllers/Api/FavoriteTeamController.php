@@ -31,6 +31,7 @@ class FavoriteTeamController extends BaseController
             'team_id' => 'required|string',
             'team_name' => 'required|string',
             'team_badge' => 'nullable|string',
+            'league_name' => 'required|string',
         ]);
 
         try {

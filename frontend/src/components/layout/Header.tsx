@@ -57,10 +57,10 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-all duration-500 border-b ${
         scrolled
-          ? "border-b border-blue-900/30 bg-slate-950/85 backdrop-blur-xl py-2"
-          : "bg-transparent py-4"
+          ? "border-blue-900/30 bg-slate-950/85 backdrop-blur-xl py-2"
+          : "border-transparent bg-transparent py-4 hover:bg-slate-950/20"
       }`}
     >
       <div className="container mx-auto flex items-center justify-between px-4 sm:px-6">
@@ -77,8 +77,8 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+        {/* Desktop Navigation - Right Aligned */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-bold ml-auto mr-8">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -178,22 +178,44 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Full Screen Drawer Refactor */}
       {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-16 z-40 bg-[#020617] h-screen animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="md:hidden fixed inset-0 z-[100] bg-[#020617] h-screen w-screen animate-in fade-in slide-in-from-right-4 duration-300 overflow-y-auto">
+          {/* Internal Header for the Drawer */}
+          <div className="flex items-center justify-between px-6 py-6 border-b border-slate-800/50">
+            <Link to="/" className="flex items-center gap-2.5" onClick={() => setIsMenuOpen(false)}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg relative overflow-hidden">
+                <Activity size={22} className="stroke-[2.5]" />
+              </div>
+              <span className="text-2xl font-extrabold tracking-tight text-white">
+                Sportify<span className="text-blue-500">.</span>
+              </span>
+            </Link>
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all transform active:scale-95"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
           <nav className="flex flex-col p-6 space-y-4">
+            <div className="mb-2">
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] px-2">Navigation Node</span>
+            </div>
+            
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `flex items-center gap-3 p-4 rounded-2xl border ${
+                `flex items-center gap-3 p-5 rounded-3xl border transition-all ${
                   isActive
-                    ? "bg-blue-600/10 border-blue-500/30 text-blue-500"
-                    : "bg-slate-900/40 border-slate-800 text-slate-400"
+                    ? "bg-blue-600/10 border-blue-500/30 text-blue-500 shadow-[inset_0_0_20px_rgba(59,130,246,0.1)]"
+                    : "bg-slate-950 border-slate-800 text-slate-400"
                 }`
               }
             >
               <Trophy size={20} />
-              <span className="font-semibold text-lg">Leagues</span>
+              <span className="font-bold text-lg">Global Leagues</span>
             </NavLink>
 
             {isAuthenticated ? (
@@ -201,28 +223,28 @@ const Header = () => {
                 <NavLink
                   to="/favorites"
                   className={({ isActive }) =>
-                    `flex items-center gap-3 p-4 rounded-2xl border ${
+                    `flex items-center gap-3 p-5 rounded-3xl border transition-all ${
                       isActive
-                        ? "bg-rose-600/10 border-rose-500/30 text-rose-500"
-                        : "bg-slate-900/40 border-slate-800 text-slate-400"
+                        ? "bg-rose-600/10 border-rose-500/30 text-rose-500 shadow-[inset_0_0_20px_rgba(244,63,94,0.1)]"
+                        : "bg-slate-950 border-slate-800 text-slate-400"
                     }`
                   }
                 >
                   <Heart size={20} />
-                  <span className="font-semibold text-lg">My Favorites</span>
+                  <span className="font-bold text-lg">My Favorites</span>
                 </NavLink>
 
                 <NavLink
                   to="/profile"
                   className={({ isActive }) =>
-                    `flex items-center gap-3 p-4 rounded-2xl border ${
+                    `flex items-center gap-3 p-5 rounded-3xl border transition-all ${
                       isActive
                         ? "bg-blue-600/10 border-blue-500/30 text-blue-500"
-                        : "bg-slate-900/40 border-slate-800 text-slate-400"
+                        : "bg-slate-950 border-slate-800 text-slate-400"
                     }`
                   }
                 >
-                  <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-blue-600 text-white text-xs font-bold overflow-hidden">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-blue-600 text-white text-xs font-black overflow-hidden shadow-lg">
                     {user?.profile_picture ? (
                       <img
                         src={user.profile_picture}
@@ -232,32 +254,39 @@ const Header = () => {
                     ) : user?.name ? (
                       getInitials(user.name)
                     ) : (
-                      <User size={16} />
+                      <User size={18} />
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-semibold text-lg">My Profile</span>
-                    <span className="text-xs opacity-50">{user?.email}</span>
+                    <span className="font-bold text-lg leading-tight">Identity Profile</span>
+                    <span className="text-[10px] font-medium opacity-40 uppercase tracking-widest">{user?.email}</span>
                   </div>
                 </NavLink>
 
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 p-4 rounded-2xl bg-red-950/20 border border-red-900/30 text-red-500 mt-4"
-                >
-                  <LogOut size={20} />
-                  <span className="font-semibold text-lg">Logout</span>
-                </button>
+                <div className="pt-6">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center gap-3 w-full p-5 rounded-3xl bg-red-950/20 border border-red-900/40 text-red-500 shadow-xl"
+                  >
+                    <LogOut size={20} />
+                    <span className="font-bold text-lg">Terminate Session</span>
+                  </button>
+                </div>
               </>
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-3 p-4 rounded-2xl bg-blue-600 text-white mt-4 shadow-lg shadow-blue-600/20"
+                className="flex items-center justify-center gap-3 p-6 rounded-3xl bg-blue-600 text-white mt-8 shadow-[0_15px_30px_rgba(59,130,246,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <User size={20} />
-                <span className="font-semibold text-lg">Login to Account</span>
+                <span className="font-black text-lg uppercase tracking-wider">Join The Grid</span>
               </Link>
             )}
+            
+            {/* Branding Footer inside Menu */}
+            <div className="pt-20 text-center opacity-20">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">Sportify v2.4</span>
+            </div>
           </nav>
         </div>
       )}

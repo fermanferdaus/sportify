@@ -39,7 +39,7 @@ const TeamsPage = () => {
   }, [teams, searchQuery]);
 
   if (status === "loading" && teams.length === 0) {
-    return <PageLoader message={`Scouting teams from ${leagueName}...`} />;
+    return <PageLoader message={`Loading data...`} />;
   }
 
   if (status === "failed") {
@@ -61,8 +61,11 @@ const TeamsPage = () => {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      {/* Global background glow - High Stability Placement */}
+      <div className="fixed -top-20 -right-20 w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full z-0 pointer-events-none animate-pulse duration-[15s]" />
+
       {/* Dynamic Header */}
-      <section className="relative pt-2 pb-12">
+      <section className="relative pt-2 pb-12 px-4 z-10 overflow-visible">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-400 mb-8 transition-colors group"
@@ -111,19 +114,16 @@ const TeamsPage = () => {
             )}
           </div>
         </div>
-
-        {/* Global background glow */}
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       </section>
 
       {/* Teams Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 px-4">
         {filteredTeams.map((team, index) => (
           <div
             key={team.idTeam}
             onClick={() =>
               navigate(
-                `/teams/${encodeURIComponent(leagueName || "")}/${team.idTeam}`,
+                `/teams/${team.idTeam}/${encodeURIComponent(leagueName || "")}`,
               )
             }
             style={{ animationDelay: `${index * 30}ms` }}

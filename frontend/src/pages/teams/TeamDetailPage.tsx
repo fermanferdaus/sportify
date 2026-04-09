@@ -12,6 +12,7 @@ import {
   History,
   Info,
   ChevronRight,
+  Heart,
 } from "lucide-react";
 import type { AppDispatch, RootState } from "../../store";
 import {
@@ -20,12 +21,19 @@ import {
   fetchStandings,
   resetTeamDetail,
 } from "../../features/sportsSlice";
+import {
+  addFavorite,
+  removeFavorite,
+  fetchFavorites,
+  selectIsTeamFavorite,
+} from "../../features/favoritesSlice";
 import PageLoader from "../../components/ui/PageLoader";
+import { toast } from "react-hot-toast";
 
 const TeamDetailPage = () => {
-  const { leagueName, teamId } = useParams<{
-    leagueName: string;
+  const { teamId, leagueName } = useParams<{
     teamId: string;
+    leagueName?: string;
   }>();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -35,11 +43,21 @@ const TeamDetailPage = () => {
     standings,
     detailStatus,
     matchesStatus,
+    standingsStatus,
   } = useSelector((state: RootState) => state.sports);
 
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const favoriteRecord = useSelector((state: RootState) =>
+    selectIsTeamFavorite(state, teamId),
+  );
+  const isFavorite = !!favoriteRecord;
+  const favoritesStatus = useSelector(
+    (state: RootState) => state.favorites.status,
+  );
+
   useEffect(() => {
-    if (teamId && leagueName) {
-      dispatch(fetchTeamDetail({ teamId, leagueName }));
+    if (teamId) {
+      dispatch(fetchTeamDetail({ teamId, leagueName: leagueName || "" }));
       dispatch(fetchMatches(teamId));
     }
     return () => {
@@ -52,6 +70,60 @@ const TeamDetailPage = () => {
       dispatch(fetchStandings(team.idLeague));
     }
   }, [team?.idLeague, dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated && favoritesStatus === "idle") {
+      dispatch(fetchFavorites());
+    }
+  }, [isAuthenticated, favoritesStatus, dispatch]);
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to add favorites", {
+        style: {
+          background: "#0f172a",
+          color: "#fff",
+          border: "1px solid #1e293b",
+        },
+      });
+      return;
+    }
+
+    if (!team) return;
+
+    try {
+      if (isFavorite) {
+        await dispatch(removeFavorite(favoriteRecord.id)).unwrap();
+        toast.success(`${team.strTeam} removed from favorites`, {
+          icon: "💔",
+          style: {
+            background: "#0f172a",
+            color: "#fff",
+            border: "1px solid #1e293b",
+          },
+        });
+      } else {
+        await dispatch(
+          addFavorite({
+            team_id: team.idTeam,
+            team_name: team.strTeam,
+            team_badge: team.strBadge,
+            league_name: team.strLeague,
+          }),
+        ).unwrap();
+        toast.success(`${team.strTeam} added to favorites!`, {
+          icon: "❤️",
+          style: {
+            background: "#0f172a",
+            color: "#fff",
+            border: "1px solid #1e293b",
+          },
+        });
+      }
+    } catch (error: any) {
+      toast.error(error || "Action failed");
+    }
+  };
 
   const formatToWIB = (timestamp?: string, defaultTime?: string) => {
     if (!timestamp) return defaultTime || "TBA";
@@ -78,7 +150,7 @@ const TeamDetailPage = () => {
   };
 
   if (detailStatus === "loading" && !team) {
-    return <PageLoader message={`Mapping ${leagueName} data nodes...`} />;
+    return <PageLoader message={`Loading data...`} />;
   }
 
   if (detailStatus === "failed") {
@@ -93,7 +165,13 @@ const TeamDetailPage = () => {
           grid.
         </p>
         <Link
-          to={`/leagues/${encodeURIComponent(leagueName || "")}/teams`}
+          to={
+            leagueName
+              ? `/leagues/${encodeURIComponent(leagueName)}/teams`
+              : team?.strLeague
+                ? `/leagues/${encodeURIComponent(team.strLeague)}/teams`
+                : "/"
+          }
           className="rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-8 py-3.5 text-sm font-bold text-white hover:scale-105 transition-all shadow-lg active:scale-95 flex items-center gap-2 mx-auto w-fit"
         >
           <ChevronLeft size={18} /> Return to Listing
@@ -112,7 +190,13 @@ const TeamDetailPage = () => {
       {/* Top Header Section: Compact & Aligned */}
       <section className="flex items-center justify-between pt-2 md:pt-2 px-4">
         <Link
-          to={`/leagues/${encodeURIComponent(leagueName || "")}/teams`}
+          to={
+            leagueName
+              ? `/leagues/${encodeURIComponent(leagueName)}/teams`
+              : team?.strLeague
+                ? `/leagues/${encodeURIComponent(team.strLeague)}/teams`
+                : "/"
+          }
           className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-colors group"
         >
           <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-slate-900 border border-slate-800 group-hover:border-blue-500/50 group-hover:bg-slate-800 transition-all shadow-lg">
@@ -126,7 +210,7 @@ const TeamDetailPage = () => {
         {/* Mini Breadcrumb Consistent with Elite design */}
         <div className="px-3 md:px-4 py-1 md:py-1.5 rounded-full bg-slate-900/50 border border-slate-800 text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5 md:gap-2">
           <span className="truncate max-w-[80px] md:max-w-none">
-            {leagueName}
+            {leagueName || team.strLeague}
           </span>
           <ChevronRight size={8} className="text-slate-700 md:hidden" />
           <ChevronRight size={10} className="text-slate-700 hidden md:block" />
@@ -134,6 +218,26 @@ const TeamDetailPage = () => {
             {team.strTeam}
           </span>
         </div>
+
+        {/* Favorite Toggle Action */}
+        <button
+          onClick={handleToggleFavorite}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all duration-300 group ${
+            isFavorite
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.1)]"
+              : "bg-slate-900/50 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300"
+          }`}
+        >
+          <Heart
+            size={18}
+            className={`transition-transform duration-300 ${
+              isFavorite ? "fill-rose-500 scale-110" : "group-hover:scale-110"
+            }`}
+          />
+          <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">
+            {isFavorite ? "Favorited" : "Add favorite"}
+          </span>
+        </button>
       </section>
 
       {/* Modern Entity Header (Integrated Banner) */}
@@ -217,6 +321,125 @@ const TeamDetailPage = () => {
                     <p key={i}>{para}</p>
                   ))}
               </div>
+            </div>
+          </section>
+
+          {/* Performance Dashboard (Standings) - Moved Inside Left Column to eliminate gap */}
+          <section className="glass-card rounded-[1.5rem] md:rounded-[2rem] overflow-hidden border border-white/5">
+            <div className="p-10 md:p-14 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-1 pt-1 bg-yellow-500 rounded-full" />
+                <h2 className="text-2xl font-black text-white tracking-widest uppercase text-sm">
+                  League Grid Sync
+                </h2>
+              </div>
+              <div className="px-5 py-2 rounded-2xl bg-slate-950 border border-slate-800 flex items-center gap-3">
+                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Live: 2024/25 Season
+                </span>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse min-w-[700px]">
+                <thead>
+                  <tr className="bg-slate-900 shadow-sm text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
+                    <th className="px-10 py-8 w-16 text-center">Rank</th>
+                    <th className="px-4 py-8">Entity</th>
+                    <th className="px-4 py-8 text-center text-slate-600">P</th>
+                    <th className="px-4 py-8 text-center text-green-500/50">
+                      W
+                    </th>
+                    <th className="px-4 py-8 text-center text-slate-600">D</th>
+                    <th className="px-4 py-8 text-center text-red-500/50">L</th>
+                    <th className="px-4 py-8 text-center text-white">Pts</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/10 font-bold font-inter">
+                  {standingsStatus === "loading" ? (
+                    <tr>
+                      <td colSpan={7} className="py-24 text-center">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="h-10 w-10 border-4 border-slate-800 border-t-blue-600 rounded-full animate-spin" />
+                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                            Aggregating Global Standings...
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : standings && standings.length > 0 ? (
+                    standings.map((row) => {
+                      const isTarget = row.idTeam === team.idTeam;
+                      return (
+                        <tr
+                          key={row.idTeam}
+                          className={`transition-all ${isTarget ? "bg-blue-600/10" : "hover:bg-white/[0.02]"}`}
+                        >
+                          <td className="px-10 py-6">
+                            <div
+                              className={`flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black ${isTarget ? "bg-blue-600 text-white" : "text-slate-600 border border-slate-800"}`}
+                            >
+                              {row.intRank}
+                            </div>
+                          </td>
+                          <td className="px-4 py-6">
+                            <div className="flex items-center gap-4">
+                              <img
+                                src={row.strBadge}
+                                alt=""
+                                className="w-8 h-8 object-contain"
+                              />
+                              <span
+                                className={`text-sm tracking-tight ${isTarget ? "text-blue-400 font-black uppercase" : "text-slate-300 font-semibold"}`}
+                              >
+                                {row.strTeam}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-6 text-center text-slate-500">
+                            {row.intPlayed}
+                          </td>
+                          <td className="px-4 py-6 text-center text-green-500/60">
+                            {row.intWin}
+                          </td>
+                          <td className="px-4 py-6 text-center text-slate-600">
+                            {row.intDraw}
+                          </td>
+                          <td className="px-4 py-6 text-center text-red-500/60">
+                            {row.intLoss}
+                          </td>
+                          <td className="px-4 py-6 text-center font-black text-white text-lg">
+                            {row.intPoints}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={7}
+                        className="py-28 text-center bg-slate-900/10"
+                      >
+                        <div className="flex flex-col items-center gap-6 max-w-xs mx-auto">
+                          <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-600">
+                            <Info size={32} strokeWidth={1.5} />
+                          </div>
+                          <div className="space-y-2">
+                            <h4 className="text-sm font-black text-white uppercase tracking-widest">
+                              Registry Not Found
+                            </h4>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
+                              Official standings data for this sport category is
+                              currently restricted or unavailable.
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>
@@ -343,105 +566,6 @@ const TeamDetailPage = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Performance Dashboard (Standings - Moved to Bottom on Mobile) */}
-        <div className="lg:col-span-8">
-          <section className="glass-card rounded-[1.5rem] md:rounded-[2rem] overflow-hidden border border-white/5">
-            <div className="p-10 md:p-14 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-1 pt-1 bg-yellow-500 rounded-full" />
-                <h2 className="text-2xl font-black text-white tracking-widest uppercase text-sm">
-                  League Grid Sync
-                </h2>
-              </div>
-              <div className="px-5 py-2 rounded-2xl bg-slate-950 border border-slate-800 flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  Live: 2024/25 Season
-                </span>
-              </div>
-            </div>
-
-            <div className="overflow-x-auto custom-scrollbar">
-              <table className="w-full text-left border-collapse min-w-[700px]">
-                <thead>
-                  <tr className="bg-slate-900 shadow-sm text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
-                    <th className="px-10 py-8 w-16 text-center">Rank</th>
-                    <th className="px-4 py-8">Entity</th>
-                    <th className="px-4 py-8 text-center text-slate-600">P</th>
-                    <th className="px-4 py-8 text-center text-green-500/50">
-                      W
-                    </th>
-                    <th className="px-4 py-8 text-center text-slate-600">D</th>
-                    <th className="px-4 py-8 text-center text-red-500/50">L</th>
-                    <th className="px-4 py-8 text-center text-white">Pts</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/10 font-bold font-inter">
-                  {standings && standings.length > 0 ? (
-                    standings.map((row) => {
-                      const isTarget = row.idTeam === team.idTeam;
-                      return (
-                        <tr
-                          key={row.idTeam}
-                          className={`transition-all ${isTarget ? "bg-blue-600/10" : "hover:bg-white/[0.02]"}`}
-                        >
-                          <td className="px-10 py-6">
-                            <div
-                              className={`flex items-center justify-center w-8 h-8 rounded-lg text-xs font-black ${isTarget ? "bg-blue-600 text-white" : "text-slate-600 border border-slate-800"}`}
-                            >
-                              {row.intRank}
-                            </div>
-                          </td>
-                          <td className="px-4 py-6">
-                            <div className="flex items-center gap-4">
-                              <img
-                                src={row.strBadge}
-                                alt=""
-                                className="w-8 h-8 object-contain"
-                              />
-                              <span
-                                className={`text-sm tracking-tight ${isTarget ? "text-blue-400 font-black uppercase" : "text-slate-300 font-semibold"}`}
-                              >
-                                {row.strTeam}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-6 text-center text-slate-500">
-                            {row.intPlayed}
-                          </td>
-                          <td className="px-4 py-6 text-center text-green-500/60">
-                            {row.intWin}
-                          </td>
-                          <td className="px-4 py-6 text-center text-slate-600">
-                            {row.intDraw}
-                          </td>
-                          <td className="px-4 py-6 text-center text-red-500/60">
-                            {row.intLoss}
-                          </td>
-                          <td className="px-4 py-6 text-center font-black text-white text-lg">
-                            {row.intPoints}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan={7} className="py-24 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="h-10 w-10 border-4 border-slate-800 border-t-blue-600 rounded-full animate-spin" />
-                          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                            Aggregating Global Standings...
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
         </div>
       </div>
     </div>

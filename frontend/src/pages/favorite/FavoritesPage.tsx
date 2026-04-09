@@ -73,7 +73,7 @@ const FavoritesPage = () => {
                   {item.team_name}
                 </h3>
                 <button
-                  onClick={() => navigate(`/teams/${item.team_id}`)}
+                  onClick={() => navigate(`/teams/${item.team_id}/${encodeURIComponent(item.league_name || '')}`)}
                   className="mt-1 flex items-center gap-1 text-xs text-blue-500 hover:text-blue-400 transition-colors"
                 >
                   View details <ArrowRight size={12} />

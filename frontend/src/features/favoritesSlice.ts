@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import api from '../lib/api';
+import type { RootState } from '../store';
 
 interface FavoriteItem {
   id: number;
   team_id: string;
   team_name: string;
   team_badge: string;
+  league_name: string;
 }
 
 interface FavoritesState {
@@ -30,7 +32,7 @@ export const fetchFavorites = createAsyncThunk('favorites/fetch', async (_, { re
   }
 });
 
-export const addFavorite = createAsyncThunk('favorites/add', async (team: { team_id: string, team_name: string, team_badge: string }, { rejectWithValue }) => {
+export const addFavorite = createAsyncThunk('favorites/add', async (team: { team_id: string, team_name: string, team_badge: string, league_name: string }, { rejectWithValue }) => {
   try {
     const response = await api.post('/favorites', team);
     return response.data.data;
@@ -69,5 +71,9 @@ const favoritesSlice = createSlice({
       });
   },
 });
+
+export const selectFavorites = (state: RootState) => state.favorites.items;
+export const selectIsTeamFavorite = (state: RootState, teamId?: string) => 
+  state.favorites.items.find(item => item.team_id === teamId);
 
 export default favoritesSlice.reducer;
