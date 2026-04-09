@@ -24,44 +24,24 @@ class SportsService
      */
     public function getLeagues(): array
     {
-        return Cache::remember('sports_leagues_enriched_v1', $this->cacheDuration, function () {
-            // 1. Get the master list of all leagues
-            $allLeagues = $this->fetchCached('raw_raw_all_leagues', 'all_leagues.php');
-            
-            // 2. Get enriched data for popular sports to maximize count without hitting rate limits
-            $sports = [
-                'Soccer', 'Basketball', 'Motorsport', 'American Football', 'Fighting'
-            ];
-            
-            // 3. Create a master collection of leagues index by ID
-            $masterLeagues = [];
-            
-            // Add all leagues from the master list (minimalist/capped at 10)
-            foreach ($allLeagues as $league) {
-                if (isset($league['idLeague'])) {
-                    $masterLeagues[$league['idLeague']] = $league;
-                }
-            }
-            
-            // Function to merge enriched data accurately
-            foreach ($sports as $sport) {
-                $sportLeagues = $this->fetchCached("enriched_{$sport}_leagues", 'search_all_leagues.php', ['s' => $sport]);
-                foreach ($sportLeagues as $league) {
-                    $id = $league['idLeague'] ?? null;
-                    if ($id) {
-                        // We prefer data from the enriched list (logos, descriptions, etc.)
-                        $masterLeagues[$id] = array_merge($masterLeagues[$id] ?? [], $league);
-                    }
+        return Cache::remember('sports_leagues_soccer_full_v3', $this->cacheDuration, function () {
+            $enrichedSoccer = $this->fetchCached("enriched_soccer_v3", 'search_all_leagues.php', ['s' => 'Soccer']);
+            $allLeagues = $this->fetchCached('raw_all_leagues_v3', 'all_leagues.php');
+
+            $allSoccer = array_filter($allLeagues, function ($league) {
+                return stripos($league['strSport'] ?? '', 'Soccer') !== false;
+            });
+
+            $finalLeagues = $enrichedSoccer;
+            $enrichedIds = array_column($enrichedSoccer, 'idLeague');
+
+            foreach ($allSoccer as $league) {
+                if (isset($league['idLeague']) && !in_array($league['idLeague'], $enrichedIds)) {
+                    $finalLeagues[] = $league;
                 }
             }
 
-            // Convert back to sequential array
-            $merged = array_values($masterLeagues);
-
-            $enrichedCount = count(array_filter($merged, fn($l) => !empty($l['strBadge'])));
-            \Log::info("SportsService: Final league count: " . count($merged) . " (Enriched: $enrichedCount)");
-
-            return $merged;
+            return $finalLeagues;
         });
     }
 
@@ -89,20 +69,15 @@ class SportsService
      */
     public function getTeamDetail(string $teamId, ?string $leagueName = null): array
     {
-        // Workaround: TheSportsDB 'lookupteam.php' currently has a bug where it returns Arsenal
-        // for many team IDs when using free keys. 
-        // If leagueName is provided, we fetch the league teams which is more reliable.
         if ($leagueName) {
             $teams = $this->getTeams($leagueName);
             $team = collect($teams)->firstWhere('idTeam', $teamId);
 
             if ($team) {
-                \Log::info("SportsService Workaround Triggered: Found team {$team['strTeam']} in league $leagueName");
                 return (array) $team;
             }
         }
 
-        // Fallback to direct lookup if league lookup fails or isn't provided
         $cacheKey = 'sports_team_detail_v2_' . $teamId;
         $data = $this->fetchCached($cacheKey, 'lookupteam.php', ['id' => $teamId]);
 
@@ -115,16 +90,10 @@ class SportsService
     public function getStandings(string $leagueId, string $season = '2024-2025'): array
     {
         $cacheKey = "sports_standings_{$leagueId}_" . str_replace('-', '_', $season);
-        $data = $this->fetchCached($cacheKey, 'lookuptable.php', [
+        return $this->fetchCached($cacheKey, 'lookuptable.php', [
             'l' => $leagueId,
             's' => $season
         ]);
-
-        if (empty($data)) {
-            \Log::info("SportsService: No standings data found for league $leagueId in season $season");
-        }
-
-        return $data;
     }
 
     /**
@@ -144,30 +113,20 @@ class SportsService
                 $response = Http::withoutVerifying()->get($url, $params);
 
                 if ($response->failed()) {
-                    \Log::error("SportsService API Error: " . $response->body());
+                    Log::error("SportsService API Error: " . $response->body());
                     return [];
                 }
 
                 $data = $response->json();
-
-                // Debug: Log the first item found to verify data
-                if (!empty($data)) {
-                    $firstKey = array_key_first($data);
-                    $firstTeam = !empty($data[$firstKey]) ? $data[$firstKey][0]['strTeam'] ?? 'Unknown' : 'Empty';
-                    \Log::info("SportsService API Response Success: $firstKey | Team: $firstTeam");
-                }
-
-                // Ambil key pertama dari json sebagai data (leagues, teams, results, dll)
                 $result = !empty($data) ? array_values($data)[0] : [];
-                
-                // CRITICAL: Do not cache empty results as they might be due to temporary API limits
+
                 if (empty($result)) {
                     return [];
                 }
 
                 return $result;
             } catch (\Exception $e) {
-                \Log::error("SportsService Exception: " . $e->getMessage());
+                Log::error("SportsService Exception: " . $e->getMessage());
                 return [];
             }
         });

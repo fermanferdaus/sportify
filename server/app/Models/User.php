@@ -55,7 +55,7 @@ class User extends Authenticatable
     protected function profilePicture(): \Illuminate\Database\Eloquent\Casts\Attribute
     {
         return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn ($value) => $value ? (str_starts_with($value, 'http') ? $value : asset('storage/' . $value)) : null,
+            get: fn ($value) => $value ? (str_starts_with($value, 'http') ? $value : asset('uploads/' . $value)) : null,
         );
     }
 

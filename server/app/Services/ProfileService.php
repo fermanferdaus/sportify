@@ -32,7 +32,7 @@ class ProfileService
             'name' => $data['name']
         ];
 
-        // 1. Handle Password Update
+        // Handle Password Update
         if (isset($data['new_password']) && !empty($data['new_password'])) {
             if (!Hash::check($data['current_password'], $user->password)) {
                 throw new \Exception('The current password you entered is incorrect.');
@@ -40,7 +40,7 @@ class ProfileService
             $updateData['password'] = Hash::make($data['new_password']);
         }
 
-        // 2. Handle Profile Picture
+        // Handle Profile Picture
         if (isset($data['profile_picture']) && $data['profile_picture'] instanceof \Illuminate\Http\UploadedFile) {
             $updateData['profile_picture'] = $this->handleImageUpload($user, $data['profile_picture']);
         }
@@ -59,7 +59,7 @@ class ProfileService
     {
         // Delete old picture if exists
         if ($user->profile_picture) {
-            Storage::disk('public')->delete($user->profile_picture);
+            Storage::disk('uploads')->delete($user->profile_picture);
         }
 
         $filename = 'profile_' . $user->id . '_' . time() . '.webp';
@@ -73,8 +73,8 @@ class ProfileService
         $image->scale(width: 400);
         $encoded = $image->toWebp(80);
 
-        // Save
-        Storage::disk('public')->put($path, (string) $encoded);
+        // Save to uploads disk (public/uploads)
+        Storage::disk('uploads')->put($path, (string) $encoded);
 
         return $path;
     }
