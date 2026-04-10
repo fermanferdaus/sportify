@@ -13,7 +13,7 @@ Sportify adalah aplikasi web pencarian informasi olahraga (Liga, Tim, dan Pertan
   - Manajemen Profil Pengguna.
   - Sistem Favorit: Menambah, menghapus, dan melihat daftar tim favorit yang tersimpan permanen di database.
 - **Teknis**:
-  - UI Premium (Antigravity Style) dengan Glassmorphism, ClickSpark, dan DotGrid background.
+  - UI Premium dengan Glassmorphism, ClickSpark, dan DotGrid background.
   - State Management terpusat menggunakan Redux Toolkit.
   - API Gateway dengan sistem Caching pada Backend (Laravel).
 
