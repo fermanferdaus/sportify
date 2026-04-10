@@ -14,7 +14,6 @@
   "footer": {
     "description": "Destinasi utama bagi penggemar olahraga global. Pantau liga, temukan tim, dan dapatkan data olahraga premium terkini.",
     "navigation": "Navigasi",
-    "discover": "Jelajahi",
     "myProfile": "Profil Saya",
     "copyright": "Dibuat untuk penggemar sejati.",
     "dataProvider": "Data disediakan oleh"
@@ -118,5 +117,11 @@
     "saving": "Menyimpan...",
     "updateProfile": "Perbarui Profil",
     "cancel": "Batal"
+  },
+  "dialog": {
+    "removeFavoriteTitle": "Hapus dari Favorit?",
+    "removeFavoriteDesc": "Apakah Anda yakin ingin menghapus {item} dari daftar favorit Anda? Tindakan ini tidak dapat dibatalkan.",
+    "cancel": "Batal",
+    "removeTeam": "Ya, Hapus Tim"
   }
 }

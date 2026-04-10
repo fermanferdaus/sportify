@@ -14,9 +14,8 @@
   "footer": {
     "description": "The ultimate destination for global sports enthusiasts. Track leagues, discover teams, and stay updated with premium sports data.",
     "navigation": "Navigation",
-    "discover": "Discover",
     "myProfile": "My Profile",
-    "copyright": "Built for elite fans.",
+    "copyright": "Built for true fans.",
     "dataProvider": "Data provided by"
   },
   "leagues": {
@@ -118,5 +117,11 @@
     "saving": "Saving...",
     "updateProfile": "Update Profile",
     "cancel": "Cancel"
+  },
+  "dialog": {
+    "removeFavoriteTitle": "Remove from Favorites?",
+    "removeFavoriteDesc": "Are you sure you want to remove {item} from your favorites list? This action cannot be undone.",
+    "cancel": "Cancel",
+    "removeTeam": "Yes, Remove Team"
   }
 }

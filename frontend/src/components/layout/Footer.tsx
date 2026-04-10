@@ -15,7 +15,7 @@ const Footer = () => {
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-indigo-600/10 blur-[100px] rounded-full -z-10" />
 
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Logo & Info */}
           <div className="md:col-span-2 space-y-6">
             <div className="flex items-center gap-2.5">
@@ -91,47 +91,6 @@ const Footer = () => {
                   </li>
                 </>
               )}
-            </ul>
-          </div>
-
-          {/* Discover Sections */}
-          <div className="space-y-6">
-            <h4 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              {t("footer.discover")}
-            </h4>
-            <ul className="space-y-4">
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  Soccer
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  Basketball
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  Motorsport
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  Formula 1
-                </a>
-              </li>
             </ul>
           </div>
         </div>
