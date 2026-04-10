@@ -1,11 +1,11 @@
-# Sportify - Full Stack Sports Management System
+# Sportify - Sports Information System
 
 Sportify adalah aplikasi web pencarian informasi olahraga (Liga, Tim, dan Pertandingan) yang terintegrasi dengan data real-time dari API pihak ketiga (TheSportsDB). Aplikasi ini memungkinkan pengguna untuk menjelajahi liga, melihat detail tim, jadwal pertandingan, serta menyimpan tim favorit ke dalam akun mereka.
 
 ## Fitur Utama
 
 - **Public Features**:
-  - Penjelajahan Liga dari berbagai cabang olahraga (Sepakbola, Basket, dll).
+  - Penjelajahan Liga dari berbagai cabang olahraga Sepakbola.
   - Daftar tim berdasarkan liga yang dipilih.
   - Detail tim lengkap dengan sejarah, list pertandingan terakhir, dan klasemen liga.
   - Konversi waktu pertandingan otomatis ke **Waktu Indonesia Barat (WIB)**.
