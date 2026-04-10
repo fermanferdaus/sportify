@@ -8,21 +8,19 @@ interface TeamDetailBannerProps {
 const TeamDetailBanner: React.FC<TeamDetailBannerProps> = ({ team }) => {
   return (
     <section className="px-4">
-      <div className="relative group">
+      <div className="relative group min-h-[400px] md:min-h-[280px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-900/60 backdrop-blur-xl border border-slate-800/50 flex flex-col justify-end">
         {/* Background Layer: Plain Dark Gradient (No Image) */}
-        <div className="relative h-[400px] md:h-[280px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-900/60 backdrop-blur-xl border border-slate-800/50">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/10" />
 
-          {/* Decorative elements */}
-          <div className="absolute -top-24 -right-24 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full group-hover:bg-blue-600/20 transition-colors duration-1000" />
-          <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
-        </div>
+        {/* Decorative elements */}
+        <div className="absolute -top-24 -right-24 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full group-hover:bg-blue-600/20 transition-colors duration-1000" />
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
 
-        {/* Identity Content: Responsive Positioning */}
-        <div className="relative -mt-96 md:mt-0 md:absolute md:bottom-8 md:left-10 md:right-10 flex flex-col md:flex-row items-center md:items-end justify-between gap-10 z-20 px-4 md:px-0 pb-12 md:pb-0">
+        {/* Identity Content: Internal and relative to parent flow */}
+        <div className="relative z-20 flex flex-col md:flex-row items-center md:items-end justify-between gap-10 px-6 md:px-10 pb-8 md:pb-8 pt-10">
           <div className="flex flex-col md:flex-row items-center md:items-end gap-8 md:gap-10">
             {/* Logo with Premium Frame */}
-            <div className="h-44 w-44 md:h-56 md:w-56 flex items-center justify-center rounded-[2.2rem] bg-slate-950 border-[10px] border-[#020617] shadow-[0_25px_60px_rgba(0,0,0,0.6)] p-8 group-hover:scale-105 group-hover:-rotate-2 transition-all duration-700 animate-in zoom-in duration-700">
+            <div className="h-44 w-44 md:h-56 md:w-56 flex-shrink-0 flex items-center justify-center rounded-[2.2rem] bg-slate-950 border-[10px] border-[#020617] shadow-[0_25px_60px_rgba(0,0,0,0.6)] p-8 group-hover:scale-105 group-hover:-rotate-2 transition-all duration-700 animate-in zoom-in duration-700">
               <img
                 src={team.strBadge}
                 alt={team.strTeam}
@@ -60,6 +58,7 @@ const TeamDetailBanner: React.FC<TeamDetailBannerProps> = ({ team }) => {
         </div>
       </div>
     </section>
+
   );
 };
 

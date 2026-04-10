@@ -116,13 +116,13 @@ export const useTeamDetail = () => {
     try {
       const date = new Date(timestamp);
       return (
-        date.toLocaleDateString("id-ID", {
+        date.toLocaleDateString("en-US", {
           weekday: "long",
           day: "numeric",
           month: "long",
         }) +
         " • " +
-        date.toLocaleTimeString("id-ID", {
+        date.toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,

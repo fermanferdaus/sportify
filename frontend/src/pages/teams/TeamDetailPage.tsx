@@ -35,7 +35,10 @@ const TeamDetailPage = () => {
   if (!team) return null;
 
   return (
-    <div key={teamId} className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 space-y-12">
+    <div
+      key={teamId}
+      className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20 space-y-8"
+    >
       {/* 1. Global Navigation Section */}
       <TeamDetailHeader
         team={team}
@@ -48,21 +51,19 @@ const TeamDetailPage = () => {
       <TeamDetailBanner team={team} />
 
       {/* 3. Integrated Information Grid - Responsive Ordering */}
-      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 px-4 pt-4 relative z-10">
-        
-        {/* Top/Main Content (Order 1 on Mobile, Left Column on Desktop) */}
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 px-4 relative z-10">
+        {/* Legacy Registry (Order 1) */}
         <div className="order-1 lg:col-span-8 space-y-12">
-          {/* Historical Context & Legacy */}
           <TeamLegacyCard team={team} />
         </div>
 
-        {/* Sidebar Utilities (Order 2 on Mobile, Right Column on Desktop) */}
-        {/* Use lg:row-start-1 lg:col-start-9 to place it in the right column on desktop regardless of order-2 */}
+        {/* Sidebar Statistics (Order 2 on Mobile, Right Column on Desktop) */}
         <div className="order-2 lg:col-span-4 lg:col-start-9 lg:row-span-2 space-y-12">
-          {/* Quick Metrics & Links */}
           <TeamStatsSidebar team={team} />
+        </div>
 
-          {/* Historical & Upcoming Fixtures */}
+        {/* Season Fixtures (Order 3) */}
+        <div className="order-3 lg:col-span-8 lg:col-start-1 space-y-12">
           <MatchTimeline
             matches={matches}
             status={matchesStatus}
@@ -70,9 +71,8 @@ const TeamDetailPage = () => {
           />
         </div>
 
-        {/* Bottom Content (Order 3 on Mobile, Below Legacy on Desktop) */}
-        <div className="order-3 lg:col-span-8 space-y-12">
-          {/* League Grid / Standings Performance */}
+        {/* League Standings (Order 4) */}
+        <div className="order-4 lg:col-span-8 lg:col-start-1 space-y-12">
           <StandingsTable
             standings={standings}
             status={standingsStatus}

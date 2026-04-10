@@ -7,7 +7,11 @@ interface MatchTimelineProps {
   formatToWIB: (timestamp?: string, defaultTime?: string) => string;
 }
 
-const MatchTimeline: React.FC<MatchTimelineProps> = ({ matches, status, formatToWIB }) => {
+const MatchTimeline: React.FC<MatchTimelineProps> = ({
+  matches,
+  status,
+  formatToWIB,
+}) => {
   return (
     <div className="glass-card p-10 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-xl border border-slate-800/50 shadow-2xl">
       <div className="flex items-center justify-between mb-12">
@@ -18,7 +22,7 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({ matches, status, formatTo
           <Calendar size={20} />
         </div>
       </div>
-      
+
       <div className="space-y-10">
         {status === "loading" ? (
           <div className="space-y-6">
@@ -31,14 +35,8 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({ matches, status, formatTo
           </div>
         ) : matches && matches.length > 0 ? (
           matches.slice(0, 5).map((m: any) => (
-            <div key={m.idEvent} className="relative pl-10 group/item">
-              {/* Vertical Line Connector */}
-              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-slate-800/50 group-hover/item:bg-blue-600 transition-colors duration-500" />
-              
-              {/* Timeline Bullet */}
-              <div className="absolute left-[-5px] top-8 h-3 w-3 rounded-full bg-slate-800 border-2 border-[#020617] group-hover/item:bg-blue-500 group-hover/item:scale-150 group-hover/item:shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-300" />
-
-              <div className="p-8 rounded-[2rem] bg-slate-950/40 group-hover/item:bg-blue-600/[0.03] transition-all border border-transparent hover:border-white/5 shadow-lg group-hover/item:shadow-blue-500/5 cursor-default group-hover/item:-translate-y-1">
+            <div key={m.idEvent} className="pb-10 last:pb-0 border-b border-white/5 last:border-0 group/item">
+              <div className="transition-all cursor-default group-hover/item:translate-x-2 duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[9px] font-black text-blue-500 uppercase tracking-widest">
                     Live Session
@@ -49,14 +47,14 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({ matches, status, formatTo
                 </div>
                 
                 <div className="flex flex-col gap-3">
-                  <div className="flex justify-between items-center text-base font-black tracking-tight text-white group-hover/item:text-blue-400 transition-colors">
-                    <span className="truncate max-w-[130px] uppercase">
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm sm:text-base font-black tracking-tight text-white group-hover/item:text-blue-400 transition-colors">
+                    <span className="uppercase overflow-hidden">
                       {m.strHomeTeam}
                     </span>
-                    <span className="px-3 py-1.5 bg-slate-900 border border-slate-800 text-[10px] rounded-xl text-slate-500 font-black shadow-inner">
+                    <span className="flex-shrink-0 px-3 py-1.5 bg-slate-950/50 border border-slate-800/50 text-[9px] sm:text-[10px] rounded-xl text-slate-500 font-black shadow-inner">
                       VS
                     </span>
-                    <span className="truncate max-w-[130px] text-right uppercase">
+                    <span className="text-right uppercase overflow-hidden">
                       {m.strAwayTeam}
                     </span>
                   </div>
