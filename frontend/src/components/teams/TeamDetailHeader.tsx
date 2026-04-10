@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface TeamDetailHeaderProps {
   team: any;
@@ -15,6 +16,7 @@ const TeamDetailHeader: React.FC<TeamDetailHeaderProps> = ({
   isFavorite,
   onToggleFavorite,
 }) => {
+  const { t } = useLanguage();
   return (
     <section className="flex items-center justify-between pt-2 md:pt-2 px-4 z-30 relative">
       <Link
@@ -31,7 +33,7 @@ const TeamDetailHeader: React.FC<TeamDetailHeaderProps> = ({
           <ChevronLeft size={18} />
         </div>
         <span className="text-[10px] font-black uppercase tracking-[0.2em] hidden sm:block">
-          Back to Teams
+          {t("teams.backToTeams")}
         </span>
       </Link>
 
@@ -62,7 +64,7 @@ const TeamDetailHeader: React.FC<TeamDetailHeaderProps> = ({
           }`}
         />
         <span className="text-[10px] font-black uppercase tracking-[0.2em] hidden sm:block">
-          {isFavorite ? "Favorited" : "Add favorite"}
+          {isFavorite ? t("teams.favorited") : t("teams.addFavorite")}
         </span>
       </button>
     </section>

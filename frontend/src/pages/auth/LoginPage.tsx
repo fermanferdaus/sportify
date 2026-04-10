@@ -10,10 +10,12 @@ import AuthInput from '../../components/auth/AuthInput';
 import AuthButton from '../../components/auth/AuthButton';
 import AuthAlert from '../../components/auth/AuthAlert';
 import { useAuthForm } from '../../hooks/useAuthForm';
+import { useLanguage } from '../../i18n';
 
 const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const {
     values,
@@ -44,8 +46,8 @@ const LoginPage = () => {
   return (
     <AuthLayout>
       <AuthCard
-        title="Welcome Back"
-        subtitle="Login to access your favorite sports teams"
+        title={t("auth.welcomeBack")}
+        subtitle={t("auth.loginSubtitle")}
         icon={LogIn}
       >
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -57,7 +59,7 @@ const LoginPage = () => {
             <AuthInput
               name="email"
               type="email"
-              placeholder="Email address"
+              placeholder={t("auth.emailPlaceholder")}
               icon={Mail}
               required
               value={values.email}
@@ -67,7 +69,7 @@ const LoginPage = () => {
             <AuthInput
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder={t("auth.passwordPlaceholder")}
               icon={Lock}
               required
               value={values.password}
@@ -76,13 +78,13 @@ const LoginPage = () => {
           </div>
 
           <AuthButton isLoading={isSubmitting}>
-            Sign in
+            {t("auth.signIn")}
           </AuthButton>
 
           <div className="text-center text-sm">
-            <span className="text-slate-400">Don't have an account? </span>
+            <span className="text-slate-400">{t("auth.noAccount")} </span>
             <Link to="/register" className="font-medium text-blue-500 hover:text-blue-400">
-              Register now
+              {t("auth.registerNow")}
             </Link>
           </div>
         </form>

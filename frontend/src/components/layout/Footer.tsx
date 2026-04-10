@@ -3,9 +3,11 @@ import { Instagram, Linkedin, Github } from "../ui/BrandIcons";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../i18n";
 
 const Footer = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { t } = useLanguage();
   return (
     <footer className="relative border-t border-slate-800/50 bg-[#020617] pt-16 pb-8 mt-20 overflow-hidden">
       {/* Background glow in footer */}
@@ -25,9 +27,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="max-w-xs text-slate-400 leading-relaxed">
-              The ultimate destination for global sports enthusiasts. Track
-              leagues, discover teams, and stay updated with premium sports
-              data.
+              {t("footer.description")}
             </p>
             <div className="flex items-center gap-4">
               <a
@@ -60,7 +60,7 @@ const Footer = () => {
           {/* Quick Links */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              Navigation
+              {t("footer.navigation")}
             </h4>
             <ul className="space-y-4">
               <li>
@@ -68,7 +68,7 @@ const Footer = () => {
                   to="/"
                   className="text-slate-400 hover:text-blue-400 transition-colors"
                 >
-                  Leagues
+                  {t("header.leagues")}
                 </Link>
               </li>
               {isAuthenticated && (
@@ -78,7 +78,7 @@ const Footer = () => {
                       to="/favorites"
                       className="text-slate-400 hover:text-rose-400 transition-colors"
                     >
-                      Favorites
+                      {t("header.favorites")}
                     </Link>
                   </li>
                   <li>
@@ -86,7 +86,7 @@ const Footer = () => {
                       to="/profile"
                       className="text-slate-400 hover:text-blue-400 transition-colors"
                     >
-                      My Profile
+                      {t("footer.myProfile")}
                     </Link>
                   </li>
                 </>
@@ -94,10 +94,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Discover Sections (Replaces Platform) */}
+          {/* Discover Sections */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-500">
-              Discover
+              {t("footer.discover")}
             </h4>
             <ul className="space-y-4">
               <li>
@@ -138,10 +138,10 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500 font-medium">
-            &copy; {new Date().getFullYear()} Sportify by Ferman Ferdaus. Built for elite fans.
+            &copy; {new Date().getFullYear()} Sportify by Ferman Ferdaus. {t("footer.copyright")}
           </p>
           <div className="text-xs text-slate-600 flex items-center gap-2">
-            Data provided by{" "}
+            {t("footer.dataProvider")}{" "}
             <a
               href="https://www.thesportsdb.com"
               target="_blank"

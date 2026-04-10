@@ -10,10 +10,12 @@ import AuthInput from '../../components/auth/AuthInput';
 import AuthButton from '../../components/auth/AuthButton';
 import AuthAlert from '../../components/auth/AuthAlert';
 import { useAuthForm } from '../../hooks/useAuthForm';
+import { useLanguage } from '../../i18n';
 
 const RegisterPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const {
     values,
@@ -35,7 +37,7 @@ const RegisterPage = () => {
     validate: (formValues) => {
       const fieldErrors: Record<string, string> = {};
       if (formValues.password !== formValues.password_confirmation) {
-        fieldErrors.password_confirmation = "Passwords do not match";
+        fieldErrors.password_confirmation = t("auth.passwordMismatch");
       }
       return fieldErrors;
     },
@@ -66,16 +68,16 @@ const RegisterPage = () => {
   return (
     <AuthLayout>
       <AuthCard
-        title="Join Sportify"
-        subtitle="Create an account to track your favorite teams"
+        title={t("auth.joinSportify")}
+        subtitle={t("auth.registerSubtitle")}
         icon={UserPlus}
       >
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           {isSuccess && (
             <AuthAlert 
               type="success" 
-              title="Registration Successful!" 
-              message="Welcome to Sportify. Redirecting you..." 
+              title={t("auth.registrationSuccess")} 
+              message={t("auth.welcomeToSportify")} 
             />
           )}
 
@@ -90,7 +92,7 @@ const RegisterPage = () => {
             <AuthInput
               name="name"
               type="text"
-              placeholder="Full Name"
+              placeholder={t("auth.fullName")}
               icon={User}
               required
               disabled={isSuccess}
@@ -101,7 +103,7 @@ const RegisterPage = () => {
             <AuthInput
               name="email"
               type="email"
-              placeholder="Email address"
+              placeholder={t("auth.emailPlaceholder")}
               icon={Mail}
               required
               disabled={isSuccess}
@@ -112,7 +114,7 @@ const RegisterPage = () => {
             <AuthInput
               name="password"
               type="password"
-              placeholder="Password"
+              placeholder={t("auth.passwordPlaceholder")}
               icon={Lock}
               required
               disabled={isSuccess}
@@ -123,7 +125,7 @@ const RegisterPage = () => {
             <AuthInput
               name="password_confirmation"
               type="password"
-              placeholder="Confirm Password"
+              placeholder={t("auth.confirmPassword")}
               icon={Lock}
               required
               disabled={isSuccess}
@@ -133,17 +135,17 @@ const RegisterPage = () => {
             />
           </div>
 
-          <AuthButton isLoading={isSubmitting} disabled={isSuccess} loadingText={isSuccess ? "Redirecting..." : "Creating Account"}>
-            {isSuccess ? "Redirecting..." : "Create Account"}
+          <AuthButton isLoading={isSubmitting} disabled={isSuccess} loadingText={isSuccess ? t("auth.redirecting") : t("auth.createAccount")}>
+            {isSuccess ? t("auth.redirecting") : t("auth.createAccount")}
           </AuthButton>
 
           <div className="text-center text-sm">
-            <span className="text-slate-400">Already have an account? </span>
+            <span className="text-slate-400">{t("auth.hasAccount")} </span>
             <Link
               to="/login"
               className="font-medium text-blue-500 hover:text-blue-400"
             >
-              Sign in
+              {t("auth.signIn")}
             </Link>
           </div>
         </form>

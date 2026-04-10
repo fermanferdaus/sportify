@@ -1,5 +1,6 @@
 import React from "react";
 import { Calendar, MapPin } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface MatchTimelineProps {
   matches: any[];
@@ -7,22 +8,19 @@ interface MatchTimelineProps {
   formatToWIB: (timestamp?: string, defaultTime?: string) => string;
 }
 
-const MatchTimeline: React.FC<MatchTimelineProps> = ({
-  matches,
-  status,
-  formatToWIB,
-}) => {
+const MatchTimeline: React.FC<MatchTimelineProps> = ({ matches, status, formatToWIB }) => {
+  const { t } = useLanguage();
   return (
     <div className="glass-card p-10 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-xl border border-slate-800/50 shadow-2xl">
       <div className="flex items-center justify-between mb-12">
         <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em]">
-          Season Fixtures
+          {t("teams.seasonFixtures")}
         </h3>
         <div className="p-2 rounded-xl bg-slate-950/50 text-slate-700">
           <Calendar size={20} />
         </div>
       </div>
-
+      
       <div className="space-y-10">
         {status === "loading" ? (
           <div className="space-y-6">
@@ -39,7 +37,7 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({
               <div className="transition-all cursor-default group-hover/item:translate-x-2 duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[9px] font-black text-blue-500 uppercase tracking-widest">
-                    Live Session
+                    {t("teams.liveSession")}
                   </div>
                   <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest block">
                     {formatToWIB(m.strTimestamp, m.strTime)}
@@ -62,7 +60,7 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({
 
                 <div className="mt-6 flex items-center gap-2.5 text-[10px] font-bold text-slate-700 uppercase tracking-widest group-hover/item:text-slate-500 transition-colors">
                   <MapPin size={12} className="text-blue-600/50" /> 
-                  <span className="truncate">{m.strVenue || "Arena Registered"}</span>
+                  <span className="truncate">{m.strVenue || t("teams.arenaRegistered")}</span>
                 </div>
               </div>
             </div>
@@ -70,7 +68,7 @@ const MatchTimeline: React.FC<MatchTimelineProps> = ({
         ) : (
           <div className="py-24 text-center glass-card rounded-[2.5rem] border-dashed border-slate-800/30 bg-slate-950/10">
             <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.3em] italic">
-              Registry Vacant
+              {t("teams.registryVacant")}
             </p>
           </div>
         )}

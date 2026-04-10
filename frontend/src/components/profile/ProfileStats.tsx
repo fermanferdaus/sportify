@@ -1,5 +1,6 @@
 import React from "react";
 import { Heart, Loader2 } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface ProfileStatsProps {
   favoritesCount: number;
@@ -7,11 +8,12 @@ interface ProfileStatsProps {
 }
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({ favoritesCount, favoritesStatus }) => {
+  const { t } = useLanguage();
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-bold text-white flex items-center gap-2">
         <div className="h-6 w-1 bg-blue-600 rounded-full" />
-        Account Statistics
+        {t("profile.accountStats")}
       </h3>
       
       <div className="space-y-4">
@@ -20,7 +22,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ favoritesCount, favoritesSt
             <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500">
               <Heart size={20} fill="currentColor" />
             </div>
-            <span className="text-slate-300 font-medium">Favorite Teams</span>
+            <span className="text-slate-300 font-medium">{t("profile.favoriteTeams")}</span>
           </div>
           <span className="text-2xl font-bold text-white">
             {favoritesStatus === "loading" ? (
@@ -34,7 +36,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ favoritesCount, favoritesSt
         {/* Placeholder for more stats if needed in the future */}
         <div className="p-4 rounded-2xl bg-slate-950/10 border border-dashed border-slate-800/30">
           <p className="text-xs text-slate-500 text-center uppercase tracking-widest font-bold">
-            More stats coming soon
+            {t("profile.moreStats")}
           </p>
         </div>
       </div>

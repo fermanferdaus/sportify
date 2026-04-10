@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Activity, Menu, User, LogOut, X, Trophy, Heart } from "lucide-react";
+import { Activity, Menu, User, LogOut, X, Trophy, Heart, Languages } from "lucide-react";
 import type { AppDispatch, RootState } from "../../store";
 import { logoutUser } from "../../features/authSlice";
+import { useLanguage } from "../../i18n";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Header = () => {
     (state: RootState) => state.auth,
   );
   const [scrolled, setScrolled] = useState(false);
+  const { locale, toggleLocale, t } = useLanguage();
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -87,7 +89,7 @@ const Header = () => {
                 : "flex items-center gap-1.5 text-slate-400 hover:text-blue-500 transition-colors"
             }
           >
-            Leagues
+            {t("header.leagues")}
           </NavLink>
           {isAuthenticated && (
             <NavLink
@@ -98,13 +100,25 @@ const Header = () => {
                   : "flex items-center gap-1.5 text-slate-400 hover:text-blue-500 transition-colors"
               }
             >
-              Favorites
+              {t("header.favorites")}
             </NavLink>
           )}
         </nav>
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">
+            {/* Language Toggle - Desktop */}
+            <button
+              onClick={toggleLocale}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/40 text-slate-400 hover:text-blue-400 hover:border-blue-500/30 transition-all group"
+              title={locale === "en" ? "Switch to Bahasa Indonesia" : "Switch to English"}
+            >
+              <Languages size={16} className="group-hover:rotate-12 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest">
+                {locale === "en" ? "ID" : "EN"}
+              </span>
+            </button>
+
             {isAuthenticated ? (
               <div className="flex items-center gap-5">
                 <NavLink
@@ -117,7 +131,7 @@ const Header = () => {
                 >
                   <div className="flex flex-col items-end leading-tight">
                     <span className="text-[10px] uppercase tracking-widest opacity-50 font-bold">
-                      Welcome back
+                      {t("header.welcomeBack")}
                     </span>
                     <span className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">
                       {user?.name?.split(" ")[0]}
@@ -164,7 +178,7 @@ const Header = () => {
                 className="flex items-center gap-2 rounded-full border border-blue-900/50 bg-slate-900/50 px-4 py-2 text-sm font-medium hover:bg-slate-800 transition-colors text-slate-300"
               >
                 <User size={16} />
-                <span>Login</span>
+                <span>{t("header.login")}</span>
               </Link>
             )}
           </div>
@@ -195,18 +209,30 @@ const Header = () => {
                 Sportify<span className="text-blue-500">.</span>
               </span>
             </Link>
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all transform active:scale-95"
-            >
-              <X size={24} />
-            </button>
+            <div className="flex items-center gap-3">
+              {/* Language Toggle - Mobile */}
+              <button
+                onClick={toggleLocale}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-blue-400 transition-all"
+              >
+                <Languages size={16} />
+                <span className="text-[10px] font-black uppercase tracking-widest">
+                  {locale === "en" ? "ID" : "EN"}
+                </span>
+              </button>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all transform active:scale-95"
+              >
+                <X size={24} />
+              </button>
+            </div>
           </div>
 
           <nav className="flex flex-col p-6 space-y-4">
             <div className="mb-2">
               <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] px-2">
-                Navigation Node
+                {t("header.navigationNode")}
               </span>
             </div>
 
@@ -221,7 +247,7 @@ const Header = () => {
               }
             >
               <Trophy size={20} />
-              <span className="font-bold text-lg">Global Leagues</span>
+              <span className="font-bold text-lg">{t("header.globalLeagues")}</span>
             </NavLink>
 
             {isAuthenticated ? (
@@ -237,7 +263,7 @@ const Header = () => {
                   }
                 >
                   <Heart size={20} />
-                  <span className="font-bold text-lg">My Favorites</span>
+                  <span className="font-bold text-lg">{t("header.myFavorites")}</span>
                 </NavLink>
 
                 <NavLink
@@ -265,7 +291,7 @@ const Header = () => {
                   </div>
                   <div className="flex flex-col">
                     <span className="font-bold text-lg leading-tight">
-                      Identity Profile
+                      {t("header.identityProfile")}
                     </span>
                     <span className="text-[10px] font-medium opacity-40 uppercase tracking-widest">
                       {user?.email}
@@ -279,7 +305,7 @@ const Header = () => {
                     className="flex items-center justify-center gap-3 w-full p-5 rounded-3xl bg-red-950/20 border border-red-900/40 text-red-500 shadow-xl"
                   >
                     <LogOut size={20} />
-                    <span className="font-bold text-lg">SignOut</span>
+                    <span className="font-bold text-lg">{t("header.signOut")}</span>
                   </button>
                 </div>
               </>
@@ -290,7 +316,7 @@ const Header = () => {
               >
                 <User size={20} />
                 <span className="font-black text-lg uppercase tracking-wider">
-                  Join The Grid
+                  {t("header.joinTheGrid")}
                 </span>
               </Link>
             )}

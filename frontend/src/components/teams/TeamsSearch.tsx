@@ -1,5 +1,6 @@
 import React from "react";
 import { Search } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface TeamsSearchProps {
   value: string;
@@ -7,6 +8,7 @@ interface TeamsSearchProps {
 }
 
 const TeamsSearch: React.FC<TeamsSearchProps> = ({ value, onChange }) => {
+  const { t } = useLanguage();
   return (
     <div className="relative w-full md:w-80 group">
       <Search
@@ -17,7 +19,7 @@ const TeamsSearch: React.FC<TeamsSearchProps> = ({ value, onChange }) => {
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search club name..."
+        placeholder={t("teams.searchPlaceholder")}
         className="w-full bg-slate-900/60 border border-slate-800 rounded-2xl py-3.5 pl-12 pr-10 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
       />
       {value && (

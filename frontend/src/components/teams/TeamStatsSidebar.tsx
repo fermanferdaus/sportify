@@ -1,17 +1,19 @@
 import React from "react";
 import { Globe, ExternalLink, MapPin, Users } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface TeamStatsSidebarProps {
   team: any;
 }
 
 const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
+  const { t } = useLanguage();
   return (
     <div className="space-y-8">
       {/* Quick Connect Registry */}
       <div className="glass-card p-10 rounded-[2.5rem] bg-slate-900/40 backdrop-blur-xl border border-slate-800/50 shadow-2xl group">
         <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] flex items-center gap-3 mb-8">
-          <Globe size={14} className="text-blue-600" /> Web Node
+          <Globe size={14} className="text-blue-600" /> {t("teams.webNode")}
         </h3>
         {team.strWebsite && team.strWebsite.trim() !== "" ? (
           <a
@@ -22,7 +24,7 @@ const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
           >
             <div className="relative z-10 flex flex-col gap-1.5">
               <span className="text-[10px] font-black text-slate-500 group-hover/link:text-blue-100 transition-colors uppercase tracking-[0.2em]">
-                Domain Portal
+                {t("teams.domainPortal")}
               </span>
               <span className="text-sm font-black text-white uppercase tracking-tight truncate max-w-[180px]">
                 {team.strWebsite}
@@ -38,10 +40,10 @@ const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
           <div className="flex items-center justify-between p-7 rounded-[2rem] bg-slate-900/20 border border-slate-800/50 opacity-60 grayscale cursor-not-allowed">
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                Digital Node
+                {t("teams.digitalNode")}
               </span>
               <span className="text-sm font-black text-slate-400 uppercase tracking-tight">
-                Portal Offline
+                {t("teams.portalOffline")}
               </span>
             </div>
             <div className="h-11 w-11 rounded-2xl bg-slate-950/50 border border-slate-800/30 flex items-center justify-center text-slate-700">
@@ -59,7 +61,7 @@ const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
           </div>
           <div className="space-y-1">
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] block">
-              Official Grounds
+              {t("teams.officialGrounds")}
             </span>
             <h4 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors leading-tight uppercase tracking-tight">
               {team.strStadium || "Elite Grounds"}
@@ -76,7 +78,7 @@ const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
           </div>
           <div className="space-y-1">
             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] block">
-              Grid Capacity
+              {t("teams.gridCapacity")}
             </span>
             <h4 className="text-xl font-black text-white group-hover:text-indigo-400 transition-colors leading-tight uppercase tracking-tight">
               {team.intStadiumCapacity
@@ -84,7 +86,7 @@ const TeamStatsSidebar: React.FC<TeamStatsSidebarProps> = ({ team }) => {
                 : "Limited"}
             </h4>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">
-              Attendance Registry
+              {t("teams.attendanceRegistry")}
             </p>
           </div>
         </div>

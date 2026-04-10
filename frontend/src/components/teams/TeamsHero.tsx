@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, Users } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface TeamsHeroProps {
   leagueName: string;
@@ -8,6 +9,7 @@ interface TeamsHeroProps {
 }
 
 const TeamsHero: React.FC<TeamsHeroProps> = ({ leagueName, teamCount }) => {
+  const { t } = useLanguage();
   return (
     <section className="relative pt-2 pb-12 px-4 z-10 overflow-visible">
       <Link
@@ -18,21 +20,20 @@ const TeamsHero: React.FC<TeamsHeroProps> = ({ leagueName, teamCount }) => {
           <ChevronLeft size={16} />
         </div>
         <span className="text-xs font-black uppercase tracking-[0.2em]">
-          Back to Leagues
+          {t("teams.backToLeagues")}
         </span>
       </Link>
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest">
-            <Users size={12} /> {teamCount} Teams Registered
+            <Users size={12} /> {teamCount} {t("teams.teamsRegistered")}
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-tight text-gradient">
-            {leagueName} <span className="text-white">Clubs</span>
+            {leagueName} <span className="text-white">{t("teams.clubs")}</span>
           </h1>
           <p className="text-slate-400 max-w-xl text-lg mb-0 text-balance font-medium leading-relaxed">
-            Discover the history, current roster, and upcoming events of every
-            club competing in the {leagueName}.
+            {t("teams.teamsHeroDesc")} {leagueName}.
           </p>
         </div>
       </div>

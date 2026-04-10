@@ -1,5 +1,6 @@
 import React from "react";
 import { User, Edit3 } from "lucide-react";
+import { useLanguage } from "../../i18n";
 
 interface ProfileHeaderProps {
   isEditing: boolean;
@@ -7,6 +8,7 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isEditing, onEditClick }) => {
+  const { t } = useLanguage();
   return (
     <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
       <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -14,10 +16,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isEditing, onEditClick })
           <User size={32} />
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-          User Profile
+          {t("profile.title")}
         </h1>
         <p className="mt-2 max-w-2xl text-lg text-slate-400">
-          Manage your personal information and account security.
+          {t("profile.subtitle")}
         </p>
       </div>
 
@@ -26,7 +28,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ isEditing, onEditClick })
           onClick={onEditClick}
           className="flex items-center justify-center gap-2 rounded-xl bg-slate-800 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-700 transition-all border border-slate-700/50 hover:border-blue-500/30 shadow-lg active:scale-95"
         >
-          <Edit3 size={18} /> Edit Profile
+          <Edit3 size={18} /> {t("profile.editProfile")}
         </button>
       )}
     </div>

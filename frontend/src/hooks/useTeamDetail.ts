@@ -15,6 +15,7 @@ import {
   selectIsTeamFavorite,
 } from '../features/favoritesSlice';
 import { toast } from 'react-hot-toast';
+import { useLanguage } from '../i18n';
 
 export const useTeamDetail = () => {
   const { teamId, leagueName } = useParams<{
@@ -33,6 +34,7 @@ export const useTeamDetail = () => {
   } = useSelector((state: RootState) => state.sports);
 
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { locale } = useLanguage();
   const favoriteRecord = useSelector((state: RootState) =>
     selectIsTeamFavorite(state, teamId || ""),
   );
@@ -115,14 +117,15 @@ export const useTeamDetail = () => {
     if (!timestamp) return defaultTime || "TBA";
     try {
       const date = new Date(timestamp);
+      const dateLocale = locale === "id" ? "id-ID" : "en-US";
       return (
-        date.toLocaleDateString("en-US", {
+        date.toLocaleDateString(dateLocale, {
           weekday: "long",
           day: "numeric",
           month: "long",
         }) +
         " • " +
-        date.toLocaleTimeString("en-US", {
+        date.toLocaleTimeString(dateLocale, {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
@@ -133,7 +136,7 @@ export const useTeamDetail = () => {
     } catch {
       return defaultTime || "TBA";
     }
-  }, []);
+  }, [locale]);
 
   const handleRetry = () => {
     if (teamId) {

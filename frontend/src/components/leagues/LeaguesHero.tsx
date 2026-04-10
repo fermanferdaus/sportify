@@ -1,8 +1,10 @@
 import React from "react";
 import { Trophy } from "lucide-react";
 import DotGrid from "../ui/DotGrid";
+import { useLanguage } from "../../i18n";
 
 const LeaguesHero: React.FC = () => {
+  const { t } = useLanguage();
   return (
     <section className="relative pb-38 min-h-[90vh] flex flex-col items-center justify-center text-center overflow-hidden bg-slate-950">
       <div className="relative z-20 flex flex-col items-center gap-8 animate-in fade-in zoom-in-95 duration-1000">
@@ -13,23 +15,22 @@ const LeaguesHero: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
           </span>
           <Trophy size={14} className="text-blue-400" />
-          Leading Sports Destination
+          {t("leagues.badge")}
         </div>
 
         <div className="space-y-4">
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
             <span className="block text-gradient-electric animate-in slide-in-from-top-8 duration-1000 delay-100 pb-2">
-              Global Sports
+              {t("leagues.heroTitle1")}
             </span>
             <span className="block text-white animate-in slide-in-from-top-8 duration-1000 delay-200">
-              Leagues Worldwide
+              {t("leagues.heroTitle2")}
             </span>
           </h1>
         </div>
 
         <p className="max-w-2xl text-lg md:text-xl text-slate-400 font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
-          Explore sports leagues from around the world. Discover teams, legacy
-          registries, league standings, and previous match results.
+          {t("leagues.heroSubtitle")}
         </p>
       </div>
 
